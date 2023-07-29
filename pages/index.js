@@ -130,7 +130,7 @@ export default function ECommerce() {
         const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
         const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
         const pieData = {
-            labels: ['Electronics', 'Fashion', 'Household'],
+            labels: ['Private', 'Company', 'Others'],
             datasets: [
                 {
                     data: [300, 50, 100],
@@ -162,17 +162,17 @@ export default function ECommerce() {
         };
 
         const barData = {
-            labels: ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'],
+            labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL'],
             datasets: [
                 {
-                    label: 'Revenue',
+                    label: 'Won',
                     backgroundColor: documentStyle.getPropertyValue('--primary-500'),
                     barThickness: 12,
                     borderRadius: 12,
                     data: weeks[selectedWeek].data[0]
                 },
                 {
-                    label: 'Profit',
+                    label: 'Lost',
                     backgroundColor: documentStyle.getPropertyValue('--primary-200'),
                     barThickness: 12,
                     borderRadius: 12,
@@ -239,7 +239,7 @@ export default function ECommerce() {
         <div className="grid">
             <div className="col-12 md:col-6 xl:col-3">
                 <div className="card h-full">
-                    <span className="font-semibold text-lg">Sales</span>
+                    <span className="font-semibold text-lg">Cases</span>
                     <div className="flex justify-content-between align-items-start mt-3">
                         <div className="w-6">
                             <span className="text-4xl font-bold text-900">120</span>
@@ -262,7 +262,7 @@ export default function ECommerce() {
             </div>
             <div className="col-12 md:col-6 xl:col-3">
                 <div className="card h-full">
-                    <span className="font-semibold text-lg">Revenue</span>
+                    <span className="font-semibold text-lg">Won</span>
                     <div className="flex justify-content-between align-items-start mt-3">
                         <div className="w-6">
                             <span className="text-4xl font-bold text-900">$450</span>
@@ -284,7 +284,7 @@ export default function ECommerce() {
             </div>
             <div className="col-12 md:col-6 xl:col-3">
                 <div className="card h-full">
-                    <span className="font-semibold text-lg">Visitors</span>
+                    <span className="font-semibold text-lg">Lost</span>
                     <div className="flex justify-content-between align-items-start mt-3">
                         <div className="w-6">
                             <span className="text-4xl font-bold text-900">360</span>
@@ -306,7 +306,7 @@ export default function ECommerce() {
             </div>
             <div className="col-12 md:col-6 xl:col-3">
                 <div className="card h-full">
-                    <span className="font-semibold text-lg">Stock</span>
+                    <span className="font-semibold text-lg">Active Clients</span>
                     <div className="flex justify-content-between align-items-start mt-3">
                         <div className="w-6">
                             <span className="text-4xl font-bold text-900">164</span>
@@ -330,7 +330,7 @@ export default function ECommerce() {
             <div className="col-12 xl:col-9">
                 <div className="card h-auto">
                     <div className="flex align-items-start justify-content-between mb-6">
-                        <span className="text-900 text-xl font-semibold">Revenue Overview</span>
+                        <span className="text-900 text-xl font-semibold">Case Overview</span>
                         <Dropdown options={weeks} value={selectedWeek} className="w-10rem" optionLabel="label" onChange={onWeekChange}></Dropdown>
                     </div>
                     <Chart height="300px" type="bar" data={chartData.barData} options={chartOptions.barOptions}></Chart>
@@ -338,7 +338,7 @@ export default function ECommerce() {
             </div>
             <div className="col-12 xl:col-3">
                 <div className="card h-auto">
-                    <div className="text-900 text-xl font-semibold mb-6">Sales by Category</div>
+                    <div className="text-900 text-xl font-semibold mb-6">Cases by Category</div>
                     <Chart height="300px" type="pie" data={chartData.pieData} options={chartOptions.pieOptions}></Chart>
                 </div>
             </div>
@@ -346,7 +346,7 @@ export default function ECommerce() {
             <div className="col-12 lg:col-8">
                 <div className="card">
                     <div className="flex flex-column md:flex-row md:align-items-start md:justify-content-between mb-3">
-                        <div className="text-900 text-xl font-semibold mb-3 md:mb-0">Recent Sales</div>
+                        <div className="text-900 text-xl font-semibold mb-3 md:mb-0">Recent Cases</div>
                         <div className="inline-flex align-items-center">
                             <span className="p-input-icon-left flex-auto">
                                 <i className="pi pi-search"></i>
@@ -359,7 +359,7 @@ export default function ECommerce() {
                     <DataTable ref={dt} value={products} dataKey="id" paginator rows={5} className="datatable-responsive" globalFilter={globalFilterValue} emptyMessage="No products found." responsiveLayout="scroll">
                         <Column field="name" header="Name" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '12rem' }}></Column>
                         <Column field="category" header="Category" sortable body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
-                        <Column field="price" header="Price" body={priceBodyTemplate} sortable headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="cost" header="Cost" body={priceBodyTemplate} sortable headerStyle={{ minWidth: '10rem' }}></Column>
                         <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable headerStyle={{ minWidth: '10rem' }}></Column>
                         <Column body={searchBodyTemplate} style={{ textAlign: 'center' }}></Column>
                     </DataTable>
@@ -367,7 +367,7 @@ export default function ECommerce() {
             </div>
             <div className="col-12 lg:col-4">
                 <div className="card h-full">
-                    <div className="text-900 text-xl font-semibold mb-3">Top Products</div>
+                    <div className="text-900 text-xl font-semibold mb-3">Top Cases</div>
                     <ul className="list-none p-0 m-0">
                         {products.slice(0, 6).map((product, i) => {
                             return (

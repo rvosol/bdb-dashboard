@@ -21,23 +21,28 @@ const AppBreadcrumb = (props) => {
 
         setBreadcrumb(filteredBreadcrumbs);
     }, [router, breadcrumbs]);
-
+    console.log(router.pathname)
     return (
         <div className={props.className}>
             <nav className="layout-breadcrumb">
                 <ol>
                     {ObjectUtils.isNotEmpty(breadcrumb)
                         ? breadcrumb.labels.map((label, index) => {
-                              if (index !== 0) {
-                                  return (
-                                      <React.Fragment key={index}>
-                                          <li className="layout-breadcrumb-chevron"> / </li>
-                                          <li key={index}>{label}</li>
-                                      </React.Fragment>
-                                  );
-                              }
-                              return <li key={index}>{label}</li>;
-                          })
+                            if (index !== 0) {
+                                return (
+                                    <>
+                                        {router.pathname !== "/" && (
+                                            <React.Fragment key={index}>
+                                                <li className="layout-breadcrumb-chevron"> / </li>
+                                                <li key={index}>{label}</li>
+                                            </React.Fragment>
+                                        )}
+                                    </>
+
+                                );
+                            }
+                            return <li key={index}>{label}</li>;
+                        })
                         : null}
                 </ol>
             </nav>

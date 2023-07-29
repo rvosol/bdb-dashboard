@@ -3,13 +3,14 @@ import AppSubMenu from './AppSubMenu';
 const AppMenu = () => {
     const model = [
         {
-            label: 'Dashboards',
+            label: 'Dashboard',
             icon: 'pi pi-home',
             items: [
                 {
                     label: 'E-Commerce',
                     icon: 'pi pi-fw pi-home',
-                    to: '/'
+                    to: '/',
+                    notShowLabel: true
                 },
                 {
                     label: 'Banking',
