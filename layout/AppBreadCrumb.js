@@ -36,7 +36,7 @@ const AppBreadcrumb = (props) => {
                             if (index !== 0) {
                                 return (
                                     <>
-                                        {router.pathname !== "/" && (
+                                   
                                             <React.Fragment key={index}>
                                                 {firstLabel && (
                                                     <li className="layout-breadcrumb-chevron"> / </li>
@@ -44,7 +44,7 @@ const AppBreadcrumb = (props) => {
                                                 
                                                 <li key={index}>{label}</li>
                                             </React.Fragment>
-                                        )}
+                                        
                                     </>
 
                                 );
