@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 const totalBlogs = [
     {
         coverImage: '/demo/images/blog/blog-1.png',
-        profile: '/demo/images/avatar/circle/avatar-f-1.png',
+        profile: '/BDB-Profile.jpg',
         title: 'Blog',
         description: 'Ornare egestas pellentesque facilisis in a ultrices erat diam metus integer sed',
         comment: 2,
@@ -142,7 +142,7 @@ function BlogList() {
                             <div className="text-900 font-medium text-xl line-height-3 mb-4">Why Earth&lsquo;s most beloved creatures are headed toward extinction</div>
                             <div className="font-sm text-700 line-height-3">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</div>
                             <div className="flex mt-4">
-                                <Avatar image={`/demo/images/avatar/circle/avatar-f-1.png`} shape="circle"></Avatar>
+                                <Avatar image={`/BDB-Profile.jpg`} shape="circle"></Avatar>
                                 <div className="ml-2">
                                     <div className="text-xs font-bold text-900 mb-1">Anna Miles</div>
                                     <div className="text-xs flex align-items-center text-700">

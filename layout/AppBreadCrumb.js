@@ -22,6 +22,11 @@ const AppBreadcrumb = (props) => {
         setBreadcrumb(filteredBreadcrumbs);
     }, [router, breadcrumbs]);
     console.log(router.pathname)
+
+    let firstLabel = true
+    if(router.pathname  !== "/apps/calendar" || router.pathname  !== "/dashboard-profile") {
+        firstLabel = false
+    }
     return (
         <div className={props.className}>
             <nav className="layout-breadcrumb">
@@ -33,7 +38,7 @@ const AppBreadcrumb = (props) => {
                                     <>
                                         {router.pathname !== "/" && (
                                             <React.Fragment key={index}>
-                                                {router.pathname !== "/dashboard-profile" && (
+                                                {firstLabel && (
                                                     <li className="layout-breadcrumb-chevron"> / </li>
                                                 )}
                                                 
@@ -45,7 +50,7 @@ const AppBreadcrumb = (props) => {
                                 );
                             }
                             return  <> 
-                             {router.pathname !== "/dashboard-profile" && (
+                             {firstLabel && (
                                             <React.Fragment>
                                                <li key={index}>{label}</li>
                                             </React.Fragment>

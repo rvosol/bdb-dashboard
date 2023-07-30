@@ -144,7 +144,7 @@ const Banking = () => {
             <div className="col-12">
                 <div className="flex flex-column sm:flex-row align-items-center gap-4">
                     <div className="flex flex-column sm:flex-row align-items-center gap-3">
-                        <img alt="avatar" src={`/demo/images/avatar/circle/avatar-f-1.png`} className="w-4rem h-4rem flex-shrink-0" />
+                        <img alt="avatar" src={`/BDB-Profile.jpg`} className="w-4rem h-4rem flex-shrink-0" />
                         <div className="flex flex-column align-items-center sm:align-items-start">
                             <span className="text-900 font-bold text-4xl">Welcome Jane</span>
                             <p className="text-600 m-0">Your last login was on 04/05/2022 at 10:24 Am</p>
@@ -271,7 +271,7 @@ const Banking = () => {
                     <div className="flex flex-column row-gap-3">
                         <div className="flex flex-column lg:flex-row gap-3">
                             <div className="w-full lg:w-6 p-3 border-1 border-round surface-border flex align-items-center hover:surface-100 cursor-pointer border-radius">
-                                <img alt="avatar" src={`/demo/images/avatar/circle/avatar-f-1.png`} className="w-2rem flex-shrink-0 mr-2" />
+                                <img alt="avatar" src={`/BDB-Profile.jpg`} className="w-2rem flex-shrink-0 mr-2" />
                                 <span className="text-900 text-lg font-medium">Aisha Williams</span>
                             </div>
                             <div className="w-full lg:w-6 p-3 border-1 border-round surface-border flex align-items-center hover:surface-100 cursor-pointer border-radius">
