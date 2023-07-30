@@ -33,7 +33,10 @@ const AppBreadcrumb = (props) => {
                                     <>
                                         {router.pathname !== "/" && (
                                             <React.Fragment key={index}>
-                                                <li className="layout-breadcrumb-chevron"> / </li>
+                                                {router.pathname !== "/dashboard-profile" && (
+                                                    <li className="layout-breadcrumb-chevron"> / </li>
+                                                )}
+                                                
                                                 <li key={index}>{label}</li>
                                             </React.Fragment>
                                         )}
@@ -41,7 +44,14 @@ const AppBreadcrumb = (props) => {
 
                                 );
                             }
-                            return <li key={index}>{label}</li>;
+                            return  <> 
+                             {router.pathname !== "/dashboard-profile" && (
+                                            <React.Fragment>
+                                               <li key={index}>{label}</li>;
+                                            </React.Fragment>
+                                        )}
+                            
+                            </> 
                         })
                         : null}
                 </ol>

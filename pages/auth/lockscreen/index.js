@@ -33,7 +33,7 @@ function LockScreen() {
                     <div className="mb-6 flex flex-column align-items-center">
                         <div className="text-900 text-xl font-bold mb-2">Screen Locked</div>
                         <span className="text-600 font-medium mb-5">Please enter your password</span>
-                        <img src="/layout/images/avatar.png" className="w-3rem h-3rem mb-2" alt="Avatar" />
+                        <img src="/BDB-Profile.jpg" className="w-3rem h-3rem mb-2" alt="Avatar" />
                         <span className="font-medium text-900 font-medium">Isabella Andolini</span>
                     </div>
                     <div className="flex flex-column">

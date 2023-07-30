@@ -265,7 +265,7 @@ export default function ECommerce() {
                     <span className="font-semibold text-lg">Won</span>
                     <div className="flex justify-content-between align-items-start mt-3">
                         <div className="w-6">
-                            <span className="text-4xl font-bold text-900">$450</span>
+                            <span className="text-4xl font-bold text-900">450</span>
                             <div className="text-green-500">
                                 <span className="font-medium">+20%</span>
                                 <i className="pi pi-arrow-up text-xs ml-2"></i>
@@ -356,7 +356,7 @@ export default function ECommerce() {
                             <Button icon="pi pi-upload" className="p-button-rounded mx-3 export-target-button" data-pr-tooltip="Export" onClick={exportCSV}></Button>
                         </div>
                     </div>
-                    <DataTable ref={dt} value={products} dataKey="id" paginator rows={5} className="datatable-responsive" globalFilter={globalFilterValue} emptyMessage="No products found." responsiveLayout="scroll">
+                    <DataTable ref={dt} value={products} dataKey="id" paginator rows={6} className="datatable-responsive" globalFilter={globalFilterValue} emptyMessage="No products found." responsiveLayout="scroll">
                         <Column field="name" header="Name" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '12rem' }}></Column>
                         <Column field="category" header="Category" sortable body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                         <Column field="cost" header="Cost" body={priceBodyTemplate} sortable headerStyle={{ minWidth: '10rem' }}></Column>

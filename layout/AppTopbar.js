@@ -39,7 +39,7 @@ const AppTopbar = forwardRef((props, ref) => {
                     </li>
                     <li className="topbar-profile">
                         <button type="button" className="p-link" onClick={showProfileSidebar}>
-                            <img src="/layout/images/avatar.png" alt="Profile" />
+                            <img src="/BDB-Profile.jpg" alt="Profile" />
                         </button>
                     </li>
                 </ul>
