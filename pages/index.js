@@ -265,7 +265,7 @@ export default function ECommerce() {
                     <span className="font-semibold text-lg">Won</span>
                     <div className="flex justify-content-between align-items-start mt-3">
                         <div className="w-6">
-                            <span className="text-4xl font-bold text-900">450</span>
+                            <span className="text-4xl font-bold text-900">45</span>
                             <div className="text-green-500">
                                 <span className="font-medium">+20%</span>
                                 <i className="pi pi-arrow-up text-xs ml-2"></i>
@@ -287,7 +287,7 @@ export default function ECommerce() {
                     <span className="font-semibold text-lg">Lost</span>
                     <div className="flex justify-content-between align-items-start mt-3">
                         <div className="w-6">
-                            <span className="text-4xl font-bold text-900">360</span>
+                            <span className="text-4xl font-bold text-900">36</span>
                             <div className="text-pink-500">
                                 <span className="font-medium">+24%</span>
                                 <i className="pi pi-arrow-down text-xs ml-2"></i>

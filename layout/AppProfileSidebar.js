@@ -14,7 +14,7 @@ const AppProfileSidebar = () => {
         <Sidebar visible={layoutState.profileSidebarVisible} onHide={onProfileSidebarHide} position="right" className="layout-profile-sidebar w-full sm:w-25rem">
             <div className="flex flex-column mx-auto md:mx-0">
                 <span className="mb-2 font-semibold">Welcome</span>
-                <span className="text-color-secondary font-medium mb-5">Isabella Andolini</span>
+                <span className="text-color-secondary font-medium mb-5">Jane</span>
 
                 <ul className="list-none m-0 p-0">
                     <li>

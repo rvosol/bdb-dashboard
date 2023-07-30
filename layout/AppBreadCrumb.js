@@ -47,7 +47,7 @@ const AppBreadcrumb = (props) => {
                             return  <> 
                              {router.pathname !== "/dashboard-profile" && (
                                             <React.Fragment>
-                                               <li key={index}>{label}</li>;
+                                               <li key={index}>{label}</li>
                                             </React.Fragment>
                                         )}
                             
