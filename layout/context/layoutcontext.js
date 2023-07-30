@@ -88,7 +88,7 @@ export const LayoutProvider = (props) => {
         <LayoutContext.Provider value={value}>
             <>
                 <Head>
-                    <title>PrimeReact - APOLLO</title>
+                    <title>BDB LAW</title>
                     <meta charSet="UTF-8" />
                     <meta name="description" content="The ultimate collection of design-agnostic, flexible and accessible React UI Components." />
                     <meta name="robots" content="index, follow" />
