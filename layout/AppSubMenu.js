@@ -3,10 +3,12 @@ import { useContext, useEffect, useRef } from 'react';
 import AppMenuitem from './AppMenuitem';
 import { LayoutContext } from './context/layoutcontext';
 import { MenuProvider } from './context/menucontext';
+import { AuthContext } from './context/AuthContext';
 
 const AppSubMenu = (props) => {
     const { layoutState, setBreadcrumbs } = useContext(LayoutContext);
     const tooltipRef = useRef(null);
+    const {userInfo} = useContext(AuthContext)
 
     useEffect(() => {
         if (tooltipRef.current) {
@@ -44,6 +46,10 @@ const AppSubMenu = (props) => {
         <MenuProvider>
             <ul className="layout-menu">
                 {props.model.map((item, i) => {
+                    if(item.label === 'User Management' && userInfo?.role !== 'superAdmin'){
+                        return null
+                    }
+                    console.log(item)
                     return !item.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
                 })}
             </ul>

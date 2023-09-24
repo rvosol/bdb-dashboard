@@ -10,8 +10,9 @@ import { Rating } from 'primereact/rating';
 import { ProductService } from '../demo/service/ProductService';
 import { LayoutContext } from '../layout/context/layoutcontext';
 import { Tooltip } from 'primereact/tooltip';
+import withAuth from '../HOC/withAuth';
 
-export default function ECommerce() {
+const ECommerce = () => {
     const [products, setProducts] = useState([]);
     const [chartOptions, setChartOptions] = useState({});
     const [weeks] = useState([
@@ -389,3 +390,7 @@ export default function ECommerce() {
         </div>
     );
 }
+
+
+
+export default withAuth(ECommerce) 

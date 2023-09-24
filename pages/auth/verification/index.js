@@ -4,14 +4,20 @@ import { Button } from 'primereact/button';
 import { useRouter } from 'next/router';
 import { LayoutContext } from '../../../layout/context/layoutcontext';
 import AppConfig from '../../../layout/AppConfig';
+import { AuthContext } from '../../../layout/context/AuthContext';
 function Verification() {
     const [value1, setValue1] = useState();
     const [value2, setValue2] = useState();
     const [value3, setValue3] = useState();
     const [value4, setValue4] = useState();
+    const [value5, setValue5] = useState();
+    const [value6, setValue6] = useState();
+    const pins = `${value1}${value2}${value3}${value4}${value5}${value6}`
     const router = useRouter();
     const { layoutConfig } = useContext(LayoutContext);
     const dark = layoutConfig.colorScheme !== 'light';
+
+    const {loginVerification, loginLoad } = useContext(AuthContext)
 
     const onDigitInput = (event, currentInputId) => {
         const isDigit = event.code.includes('Numpad') || event.code.includes('Digit');
@@ -31,6 +37,13 @@ function Verification() {
         }
     };
 
+    console.log(router?.query)
+    const maskEmail = (email) => {
+        if (!email) return 'Loading...';
+        const [namePart, domain] = email.split('@');
+        const maskedNamePart = namePart.substring(0, 2) + '**';
+        return `${maskedNamePart}@${domain}`;
+      };
     return (
         <>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 800" className="fixed left-0 top-0 min-h-screen min-w-screen" preserveAspectRatio="none">
@@ -56,7 +69,7 @@ function Verification() {
                         <span className="text-600 font-medium">We have sent code to you email:</span>
                         <div className="flex align-items-center mt-1">
                             <i className="pi pi-envelope text-600"></i>
-                            <span className="text-900 font-bold ml-2">dm**@gmail.com</span>
+                            <span className="text-900 font-bold ml-2">{maskEmail(router?.query?.email)}</span>
                         </div>
                     </div>
                     <div className="flex flex-column">
@@ -65,10 +78,19 @@ function Verification() {
                             <InputNumber inputId="val2" value={value2} onValueChange={(e) => setValue2(e.value)} inputClassName="w-3rem text-center" maxLength={1} onKeyUp={(e) => onDigitInput(e, 2)}></InputNumber>
                             <InputNumber inputId="val3" value={value3} onValueChange={(e) => setValue3(e.value)} inputClassName="w-3rem text-center" maxLength={1} onKeyUp={(e) => onDigitInput(e, 3)}></InputNumber>
                             <InputNumber inputId="val4" value={value4} onValueChange={(e) => setValue4(e.value)} inputClassName="w-3rem text-center" maxLength={1} onKeyUp={(e) => onDigitInput(e, 4)}></InputNumber>
+
+                            <InputNumber inputId="val5" value={value5} onValueChange={(e) => setValue5(e.value)} inputClassName="w-3rem text-center" maxLength={1} onKeyUp={(e) => onDigitInput(e, 5)}></InputNumber>
+
+                            <InputNumber inputId="val6" value={value6} onValueChange={(e) => setValue6(e.value)} inputClassName="w-3rem text-center" maxLength={1} onKeyUp={(e) => onDigitInput(e, 6)}></InputNumber>
                         </div>
                         <div className="flex flex-wrap gap-2 justify-content-between">
-                            <Button label="Cancel" className="flex-auto p-button-outlined" onClick={() => router.push('/')}></Button>
-                            <Button label="Verify" className="flex-auto" onClick={() => router.push('/')}></Button>
+                            <Button label="Cancel" className="flex-auto p-button-outlined" onClick={() => router.push('/auth/login')}></Button>
+                            <Button disabled={loginLoad} label={loginLoad ? "Loading" : "Verify"} className="flex-auto" onClick={() => loginVerification(
+                                {
+                                    code: pins,
+                                    traceId: router?.query?.traceId
+                                }
+                            )}></Button>
                         </div>
                     </div>
                 </div>

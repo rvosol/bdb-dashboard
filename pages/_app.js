@@ -6,17 +6,32 @@ import 'primeicons/primeicons.css';
 import 'primereact/resources/primereact.css';
 import '../styles/layout/layout.scss';
 import '../styles/demo/Demos.scss';
+import { AuthProvider } from '../layout/context/AuthContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function MyApp({ Component, pageProps }) {
     if (Component.getLayout) {
-        return <LayoutProvider>{Component.getLayout(<Component {...pageProps} />)}</LayoutProvider>;
+        return (
+            <AuthProvider>
+                <LayoutProvider>{Component.getLayout(<Component {...pageProps} />)}</LayoutProvider>
+
+                <ToastContainer />
+            </AuthProvider>
+        )
     } else {
         return (
-            <LayoutProvider>
-                <Layout>
-                    <Component {...pageProps} />
-                </Layout>
-            </LayoutProvider>
+
+            <AuthProvider>
+
+                <LayoutProvider>
+                    <Layout>
+                        <Component {...pageProps} />
+                    </Layout>
+                </LayoutProvider>
+ <ToastContainer />
+            </AuthProvider>
+
         );
     }
 }

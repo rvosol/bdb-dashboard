@@ -2,9 +2,11 @@ import { Badge } from 'primereact/badge';
 import { Sidebar } from 'primereact/sidebar';
 import { useContext } from 'react';
 import { LayoutContext } from './context/layoutcontext';
+import { AuthContext } from './context/AuthContext';
 
 const AppProfileSidebar = () => {
     const { layoutState, setLayoutState } = useContext(LayoutContext);
+    const {logout} = useContext(AuthContext)
 
     const onProfileSidebarHide = () => {
         setLayoutState((prevState) => ({ ...prevState, profileSidebarVisible: false }));
@@ -50,7 +52,7 @@ const AppProfileSidebar = () => {
                             </div>
                         </a>
                     </li>
-                    <li>
+                    <li onClick={() => logout()}>
                         <a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
                             <span>
                                 <i className="pi pi-power-off text-xl text-primary"></i>

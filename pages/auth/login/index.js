@@ -6,11 +6,28 @@ import React, { useContext, useState } from 'react';
 import AppConfig from '../../../layout/AppConfig';
 import { LayoutContext } from '../../../layout/context/layoutcontext';
 
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { AuthContext } from '../../../layout/context/AuthContext';
+import withoutAuth from '../../../HOC/withoutAuth';
 function Login() {
     const [rememberMe, setRememberMe] = useState(false);
     const router = useRouter();
     const { layoutConfig } = useContext(LayoutContext);
     const dark = layoutConfig.colorScheme !== 'light';
+
+
+    const { login, loginLoad } = useContext(AuthContext);
+
+    const validationSchema = Yup.object({
+        email: Yup.string().email('Invalid email').required('Required'),
+        password: Yup.string().required('Required'),
+    });
+
+    const handleSubmit = (values) => {
+        login(values);
+        // router.push('/');
+    };
 
     return (
         <>
@@ -30,32 +47,63 @@ function Login() {
                 />
                 <path fill={dark ? 'var(--primary-500)' : 'var(--primary-100)'} d="M1397.5 154.8c47.2-10.6 93.6-25.3 138.6-43.8c21.7-8.9 43-18.8 63.9-29.5V0H643.4c62.9 41.7 129.7 78.2 202.1 107.4C1020.4 178.1 1214.2 196.1 1397.5 154.8z" />
             </svg>
+
+
             <div className="px-5 min-h-screen flex justify-content-center align-items-center">
                 <div className="border-1 surface-border surface-card border-round py-7 px-4 md:px-7 z-1">
                     <div className="mb-4">
                         <div className="text-900 text-xl font-bold mb-2">Log in</div>
                         <span className="text-600 font-medium">Please enter your details</span>
                     </div>
-                    <div className="flex flex-column">
-                        <span className="p-input-icon-left w-full mb-4">
-                            <i className="pi pi-envelope"></i>
-                            <InputText id="email" type="text" className="w-full md:w-25rem" placeholder="Email" />
-                        </span>
-                        <span className="p-input-icon-left w-full mb-4">
-                            <i className="pi pi-lock"></i>
-                            <InputText id="password" type="password" className="w-full md:w-25rem" placeholder="Password" />
-                        </span>
-                        <div className="mb-4 flex flex-wrap gap-3">
-                            <div>
-                                <Checkbox name="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.checked)} className="mr-2"></Checkbox>
-                                <label htmlFor="checkbox" className="text-900 font-medium mr-8">
-                                    Remember Me
-                                </label>
+                    <Formik
+                        initialValues={{ email: '', password: '' }}
+                        validationSchema={validationSchema}
+                        onSubmit={handleSubmit}
+                    >
+                        <Form>
+                            <div className="flex flex-column">
+                                <span className="p-input-icon-left w-full mb-4">
+                                    <i className="pi pi-envelope"></i>
+                                    <Field
+                                        name="email"
+                                        as={InputText}
+                                        type="text"
+                                        className="w-full md:w-25rem"
+                                        placeholder="Email"
+                                    />
+                                    <ErrorMessage name="email" component="div" />
+                                </span>
+                                <span className="p-input-icon-left w-full mb-4">
+                                    <i className="pi pi-lock"></i>
+                                    <Field
+                                        name="password"
+                                        as={InputText}
+                                        type="password"
+                                        className="w-full md:w-25rem"
+                                        placeholder="Password"
+                                    />
+                                    <ErrorMessage name="password" component="div" />
+                                </span>
+                                <div className="mb-4 flex flex-wrap gap-3">
+                                    <div>
+                                        <Checkbox
+                                            name="checkbox"
+                                            checked={rememberMe}
+                                            onChange={(e) => setRememberMe(e.checked)}
+                                            className="mr-2"
+                                        />
+                                        <label htmlFor="checkbox" className="text-900 font-medium mr-8">
+                                            Remember Me
+                                        </label>
+                                    </div>
+                                    <a className="text-600 cursor-pointer hover:text-primary cursor-pointer ml-auto transition-colors transition-duration-300">
+                                        Reset password
+                                    </a>
+                                </div>
+                                <Button disabled={loginLoad} type="submit" label={loginLoad ? "Loading" : "Log In" }className="w-full" />
                             </div>
-                            <a className="text-600 cursor-pointer hover:text-primary cursor-pointer ml-auto transition-colors transition-duration-300">Reset password</a>
-                        </div>
-                        <Button label="Log In" className="w-full" onClick={() => router.push('/')}></Button>
-                    </div>
+                        </Form>
+                    </Formik>
                 </div>
             </div>
         </>
@@ -71,4 +119,4 @@ Login.getLayout = function getLayout(page) {
     );
 };
 
-export default Login;
+export default Login ;

@@ -366,22 +366,22 @@ const AppMenu = () => {
         //         }
         //     ]
         // },
-        // {
-        //     label: 'User Management',
-        //     icon: 'pi pi-fw pi-user',
-        //     items: [
-        //         {
-        //             label: 'List',
-        //             icon: 'pi pi-fw pi-list',
-        //             to: '/profile/list'
-        //         },
-        //         {
-        //             label: 'Create',
-        //             icon: 'pi pi-fw pi-plus',
-        //             to: '/profile/create'
-        //         }
-        //     ]
-        // },
+        {
+            label: 'User Management',
+            icon: 'pi pi-fw pi-user',
+            items: [
+                {
+                    label: 'List',
+                    icon: 'pi pi-fw pi-list',
+                    to: '/profile/list'
+                },
+                {
+                    label: 'Create',
+                    icon: 'pi pi-fw pi-plus',
+                    to: '/profile/create'
+                }
+            ]
+        },
         // {
         //     label: 'Hierarchy',
         //     icon: 'pi pi-fw pi-align-left',

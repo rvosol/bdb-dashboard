@@ -1,7 +1,3 @@
-
-
-
-
 import { useRouter } from 'next/router';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { Button } from 'primereact/button';
@@ -11,7 +7,6 @@ import { InputText } from 'primereact/inputtext';
 import { ProgressBar } from 'primereact/progressbar';
 import React, { useEffect, useRef, useState } from 'react';
 import { CustomerService } from '../../../demo/service/CustomerService';
-import axiosInstance from '../../../utils/axiosInstance';
 
 function List() {
     const [customers, setCustomers] = useState([]);
@@ -20,38 +15,6 @@ function List() {
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const router = useRouter();
     const dt = useRef(null);
-
-    const [users, setUsers] = useState([]);
-    const [page, setPage] = useState(0);
-    const [totalRecords, setTotalRecords] = useState(0);
-    const [globalFilter, setGlobalFilter] = useState('');
-
-
-    useEffect(() => {
-        // Fetch data from API with pagination and search filter
-        async function fetchData() {
-            setLoading(true);
-
-            try {
-                const response = await axiosInstance.get('/admin/subAdmin', {
-                    params: {
-                        page: page + 1, // API uses 1-indexed pages
-                        limit: 10, // Number of records per page
-                        q: globalFilter // Search query
-                    }
-                });
-
-                setUsers(response?.data?.data?.docs);
-                setTotalRecords(parseInt(response?.data?.data?.totalDocs, 10));
-            } catch (error) {
-                console.error('Failed to fetch data:', error);
-            }
-
-            setLoading(false);
-        }
-
-        fetchData();
-    }, [page, globalFilter]);
 
     const getCustomers = (data) => {
         return [...(data || [])].map((d) => {
@@ -105,16 +68,13 @@ function List() {
             <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
                 <span className="p-input-icon-left w-full sm:w-20rem flex-order-1 sm:flex-order-0">
                     <i className="pi pi-search"></i>
-                    <InputText
-                        type="search"
-                        onInput={(e) => setGlobalFilter(e.target.value)}
-                        placeholder="Global Search"
-                    />
+                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Global Search" className="w-full" />
                 </span>
                 <Button type="button" icon="pi pi-user-plus" label="Add New" className="p-button-outlined w-full sm:w-auto flex-order-0 sm:flex-order-1" onClick={() => router.push('/profile/create')} />
             </div>
         );
     };
+
     const nameBodyTemplate = (customer) => {
         return (
             <>
@@ -151,32 +111,26 @@ function List() {
     };
 
     const header = renderHeader();
-    const renderColumnData = (rowData, field) => {
-        return rowData[field] ? rowData[field] : "N/A";
-    };
+
     return (
         <div className="card">
             <DataTable
-            ref={dt}
-                value={users}
-                lazy
+                ref={dt}
+                value={customers}
+                header={header}
                 paginator
                 rows={10}
-                page={page}
-                totalRecords={totalRecords}
-                onPage={e => setPage(e.page)}
+                responsiveLayout="scroll"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                rowsPerPageOptions={[10, 25, 50]}
+                filters={filters}
                 loading={loading}
-                header={header}
-                globalFilter={globalFilter}
-                emptyMessage="No users found"
             >
-                <Column field="_id" header="ID" body={(rowData) => renderColumnData(rowData, "_id")} />
-                <Column field="firstName" header="Name" body={(rowData) => renderColumnData(rowData, "firstName")} />
-                <Column field="email" header="Email" body={(rowData) => renderColumnData(rowData, "email")} />
-                <Column field="mobile" header="Mobile" body={(rowData) => renderColumnData(rowData, "mobile")} />
-                <Column field="position" header="Position" body={(rowData) => renderColumnData(rowData, "position")} />
-                <Column field="department" header="Department" body={(rowData) => renderColumnData(rowData, "department")} />
-                <Column field="status" header="Status" body={(rowData) => renderColumnData(rowData, "status")} />
+                <Column field="name" header="Name" sortable body={nameBodyTemplate} headerClassName="white-space-nowrap" style={{ width: '25%' }}></Column>
+                <Column field="country.name" header="Country" sortable body={countryBodyTemplate} headerClassName="white-space-nowrap" style={{ width: '25%' }}></Column>
+                <Column field="date" header="Join Date" sortable body={dateBodyTemplate} headerClassName="white-space-nowrap" style={{ width: '25%' }}></Column>
+                <Column field="representative.name" header="Created By" body={createdByBodyTemplate} headerClassName="white-space-nowrap" style={{ width: '25%' }} sortable></Column>
+                <Column field="activity" header="Activity" body={activityBodyTemplate} headerClassName="white-space-nowrap" style={{ width: '25%' }} sortable></Column>
             </DataTable>
         </div>
     );
