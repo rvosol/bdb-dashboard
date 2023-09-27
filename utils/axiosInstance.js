@@ -6,7 +6,7 @@ import axios from 'axios';
 
 
 
-const BACKEND_URL = 'http://13.51.238.151:7000/api'
+const BACKEND_URL = 'https://bdb-staging-api.aisk.chat/api'
 
 
 
