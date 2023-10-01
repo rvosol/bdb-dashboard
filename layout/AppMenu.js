@@ -382,6 +382,22 @@ const AppMenu = () => {
                 }
             ]
         },
+        {
+            label: 'Client Management',
+            icon: 'pi pi-fw pi-user',
+            items: [
+                {
+                    label: 'List',
+                    icon: 'pi pi-fw pi-list',
+                    to: '/client/list'
+                },
+                {
+                    label: 'Create',
+                    icon: 'pi pi-fw pi-plus',
+                    to: '/client/create'
+                }
+            ]
+        },
         // {
         //     label: 'Hierarchy',
         //     icon: 'pi pi-fw pi-align-left',
