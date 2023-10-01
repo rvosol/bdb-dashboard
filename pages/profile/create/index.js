@@ -12,7 +12,7 @@ import axiosInstance from '../../../utils/axiosInstance';
 import { toast } from 'react-toastify';
 
 const schema = Joi.object({
-    EmployeeID: Joi.string().required(),
+    employeeId: Joi.string().required(),
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
     middleName: Joi.string().required(),
@@ -38,7 +38,7 @@ function validateValues(values) {
 
 function ProfileCreate() {
     const initialValues = {
-        EmployeeID: '123', // Initialize as needed
+        employeeId: '123', // Initialize as needed
         firstName: '',
         lastName: '',
         middleName: '',
@@ -96,11 +96,11 @@ function ProfileCreate() {
 
 
                                     <div className="field mb-4 col-12">
-                                        <label htmlFor="EmployeeID" className="font-medium text-900">
+                                        <label htmlFor="employeeId" className="font-medium text-900">
                                             Employee ID
                                         </label>
-                                        <Field as="input" id="EmployeeID" name="EmployeeID" disabled className='p-inputtext p-component' />
-                                        <ErrorMessage name="EmployeeID" component="div" />
+                                        <Field as="input" id="employeeId" name="employeeId"  className='p-inputtext p-component' />
+                                        <ErrorMessage name="employeeId" component="div" />
                                     </div>
 
                                      {/* First Name */}
