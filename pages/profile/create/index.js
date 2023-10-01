@@ -56,6 +56,7 @@ function ProfileCreate() {
           await axiosInstance.post('/admin/subAdmin', { ...values, role: 'admin' });
           setSubmitting(false);
           resetForm(); // Reset the form
+          toast.success('User created')
         } catch (error) {
           setSubmitting(false);
           toast.error(error?.response?.data?.message || 'API call failed'); // Replace with your error handling logic
