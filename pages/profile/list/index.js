@@ -157,7 +157,7 @@ function List() {
     return (
         <div className="card">
             <DataTable
-            ref={dt}
+                ref={dt}
                 value={users}
                 lazy
                 paginator
@@ -174,8 +174,8 @@ function List() {
                 <Column field="firstName" header="Name" body={(rowData) => renderColumnData(rowData, "firstName")} />
                 <Column field="email" header="Email" body={(rowData) => renderColumnData(rowData, "email")} />
                 <Column field="mobile" header="Mobile" body={(rowData) => renderColumnData(rowData, "mobile")} />
-                <Column field="position" header="Position" body={(rowData) => renderColumnData(rowData, "position")} />
-                <Column field="department" header="Department" body={(rowData) => renderColumnData(rowData, "department")} />
+                {/* <Column field="position" header="Position" body={(rowData) => renderColumnData(rowData, "position")} /> */}
+                {/* <Column field="department" header="Department" body={(rowData) => renderColumnData(rowData, "department")} /> */}
                 <Column field="status" header="Status" body={(rowData) => renderColumnData(rowData, "status")} />
             </DataTable>
         </div>
