@@ -43,7 +43,7 @@ const Crud = () => {
     const [page, setPage] = useState(1); // Add page state to handle current page
     const [limit, setLimit] = useState(10);
     const [file, setFile] = useState(null);
-
+    const [totalRecords, setTotalRecords] = useState(0);
 
     const toast = useRef(null);
     const dt = useRef(null);
@@ -55,13 +55,14 @@ const Crud = () => {
                 params: {
                     page,
                     limit,
-                    query: globalFilter || '',
+                    q: globalFilter || '',
                 }
             });
 
             const data = response.data;
             if (data.status === 'success') {
                 setProducts(data.data.docs);
+                setTotalRecords(parseInt(data?.data?.totalDocs, 10));
             } else {
                 console.error('Failed to fetch products');
             }
@@ -322,7 +323,9 @@ const Crud = () => {
                         onSelectionChange={(e) => setSelectedProducts(e.value)}
                         dataKey="id"
                         paginator
-                        rows={10}
+                        rows={limit}
+                        lazy
+                        totalRecords={totalRecords}
                         rowsPerPageOptions={[5, 10, 25]}
                         className="datatable-responsive"
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -332,6 +335,12 @@ const Crud = () => {
                         header={header}
                         responsiveLayout="scroll"
                         loading={loading}
+                        onPage={e => {
+                            console.log(e, 'pagepagepagepagepagepage')
+                            setPage(e.page + 1);
+                            setLimit(e.rows);
+                        }}
+                        first={(page - 1) * limit}
                     >
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '4rem' }}></Column> */}
                         {/* <Column field="code" header="Code" sortable body={codeBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column> */}

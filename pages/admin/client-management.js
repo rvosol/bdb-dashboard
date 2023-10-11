@@ -48,12 +48,10 @@ const Crud = () => {
     const toast = useRef(null);
     const dt = useRef(null);
 
-    console.log(totalRecords)
-
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const response = await axiosInstance.get(`/admin/department`, {
+            const response = await axiosInstance.get(`/admin/clients`, {
                 params: {
                     page,
                     limit,
@@ -105,44 +103,47 @@ const Crud = () => {
         setSubmitted(true);
 
         if (product.name.trim()) {
-            let formData = {};
+            let formData = {}
+            formData.clientId = product.clientId
             formData.name = product.name
-            formData.departmentId = product.departmentId
+            formData.barangay = product.barangay
+            formData.province = product.province
+            formData.city = product.city
+            formData.zipCode = product.zipCode
+            formData.address = product.address
+            formData.contact = product.contact
             formData.status = 'active'
-
 
             try {
                 if (product._id) {
-                    // Update existing product/position
-                    formData.id = product._id
-                    const response = await axiosInstance.patch(`/admin/department`, formData);
+                    const response = await axiosInstance.patch(`/admin/clients`, formData);
                     if (response.data.status === 'success') {
-                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Position Updated', life: 3000 });
+                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Client Updated', life: 3000 });
                     } else {
-                        console.error('Failed to update position');
+                        console.error('Failed to update Client');
                     }
                     fetchProducts()
                     hideDialog()
                     setProduct(emptyProduct)
                 } else {
-                    // Create new product/position
-                    const response = await axiosInstance.post('/admin/department', formData);
+                    // Create new product/Client
+                    const response = await axiosInstance.post('/admin/clients', formData);
                     if (response.data.status === 'success') {
-                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Position Created', life: 3000 });
+                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Client Created', life: 3000 });
                     } else {
-                        console.error('Failed to create position');
+                        console.error('Failed to create Client');
                     }
                     fetchProducts()
                     hideDialog()
                     setProduct(emptyProduct)
                 }
 
-                // Code to refresh the list of products/positions
+                // Code to refresh the list of products/Client
                 // ...
 
             } catch (error) {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the contact', life: 3000 });
-                console.log('An error occurred while saving the position', error?.response?.data?.message);
+                toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the Client', life: 3000 });
+                console.log('An error occurred while saving the Client', error?.response?.data?.message);
             }
         }
     };
@@ -161,7 +162,7 @@ const Crud = () => {
     const deleteProduct = async () => {
 
         try {
-            await axiosInstance.delete(`/admin/department/${product._id}`)
+            await axiosInstance.delete(`/admin/clients/${product._id}`)
             let _products = products.filter((val) => val._id !== product._id);
             setProducts(_products);
             setDeleteProductDialog(false);
@@ -202,8 +203,8 @@ const Crud = () => {
     const nameBodyTemplate = (rowData) => {
         return (
             <>
-                <span className="p-column-title">Department Id</span>
-                {rowData.departmentId}
+                <span className="p-column-title">Name</span>
+                {rowData.name}
             </>
         );
     };
@@ -220,8 +221,8 @@ const Crud = () => {
     const priceBodyTemplate = (rowData) => {
         return (
             <>
-                <span className="p-column-title">Name</span>
-                {rowData?.name}
+                <span className="p-column-title">barangay</span>
+                {rowData?.barangay}
             </>
         );
     };
@@ -229,8 +230,8 @@ const Crud = () => {
     const categoryBodyTemplate = (rowData) => {
         return (
             <>
-                <span className="p-column-title">Mobile</span>
-                {rowData.mobile}
+                <span className="p-column-title">province</span>
+                {rowData.province}
             </>
         );
     };
@@ -238,8 +239,8 @@ const Crud = () => {
     const ratingBodyTemplate = (rowData) => {
         return (
             <>
-                <span className="p-column-title">Position</span>
-                {rowData?.position}
+                <span className="p-column-title">city</span>
+                {rowData?.city}
             </>
         );
     };
@@ -264,7 +265,7 @@ const Crud = () => {
 
     const header = (
         <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-            <h5 className="m-0">Manage Positions</h5>
+            <h5 className="m-0">Manage Clients</h5>
             <span className="block mt-2 md:mt-0 p-input-icon-left">
                 <i className="pi pi-search" />
                 <InputText type="search" onChange={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
@@ -320,9 +321,9 @@ const Crud = () => {
                         rowsPerPageOptions={[5, 10, 25]}
                         className="datatable-responsive"
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} positions"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} clients"
                         // globalFilter={globalFilter}
-                        emptyMessage="No positions found."
+                        emptyMessage="No client found."
                         header={header}
                         responsiveLayout="scroll"
                         loading={loading}
@@ -332,27 +333,40 @@ const Crud = () => {
                             setLimit(e.rows);
                         }}
                         first={(page - 1) * limit}
-
                     >
-                        {/* <Column selectionMode="multiple" headerStyle={{ width: '4rem' }}></Column> */}
-                        {/* <Column field="code" header="Code" sortable body={codeBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column> */}
-                        <Column field="departmentId" header="departmentId" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
 
-                        <Column field="name" header="Name" body={priceBodyTemplate} sortable></Column>
-
+                        <Column field="clientId" header="clientId" headerStyle={{ minWidth: '15rem' }}></Column>
+                        <Column field="name" header="name" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+                        {/* <Column header="Image" body={imageBodyTemplate}></Column> */}
+                        <Column field="barangay" header="Country Code" body={priceBodyTemplate} sortable></Column>
+                        <Column field="province" header="Province" sortable body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="city" header="City" body={ratingBodyTemplate} sortable></Column>
+                        <Column field="zipCode" header="ZipCode" sortable></Column>
+                        <Column field="address" header="Address" body={ratingBodyTemplate} sortable></Column>
                         <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable headerStyle={{ minWidth: '10rem' }}></Column>
-
-                        <Column body={actionBodyTemplate} header="Action" headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
 
 
                     <Formik
                         initialValues={product} // Populate initial values with the current product
                         validationSchema={Yup.object({
-                            departmentId: Yup.string()
-                                .required('Department Id is required'),
+                            clientId: Yup.string()
+                                .required('Client Id is required'),
                             name: Yup.string()
-                                .required('Name is required')
+                                .required('Name is required'),
+                            barangay: Yup.string()
+                                .required('Country Code is required'),
+                            province: Yup.string()
+                                .required('Province is required'),
+                            city: Yup.string()
+                                .required('City is required'),
+                            zipCode: Yup.string()
+                                .required('zipCode is required'),
+                            address: Yup.string()
+                                .required('Address is required'),
+                            contact: Yup.string()
+                                .required('Contact is required')
                             // ... (add more validations as per your requirements)
                         })}
                         onSubmit={(values, { setSubmitting }) => {
@@ -379,39 +393,37 @@ const Crud = () => {
                                 <Form>
 
 
+
                                     <Dialog
                                         visible={productDialog}
                                         style={{ width: '450px' }}
-                                        header="Position Details"
+                                        header="Client Details"
                                         modal
                                         className="p-fluid"
                                         footer={ProductDialogFooter}
                                         onHide={hideDialog}
                                     >
 
-                                        {console.log(formik.errors.firstName)}
-                                        {console.log(formik.touched.firstName)}
-                                        {product.image && <img src={`/demo/images/position/${product.image}`} alt={product.image} width="150" className="mt-0 mx-auto mb-5 block shadow-2" />}
                                         <div className="field">
-                                            <label htmlFor="departmentId">Department Id</label>
+                                            <label htmlFor="firstName">Client Id</label>
                                             <Field
                                                 as={InputText}
-                                                id="departmentId"
-                                                name="departmentId"
-                                                className={classNames({ 'p-invalid': formik.errors.departmentId && formik.touched.departmentId })}
+                                                id="clientId"
+                                                name="clientId"
+                                                className={classNames({ 'p-invalid': formik.errors.clientId && formik.touched.clientId })}
                                                 onChange={(e) => {
                                                     formik.handleChange(e);  // Handle the change using Formik
-                                                    onInputChange(e, 'departmentId');  // Also update the existing product state
+                                                    onInputChange(e, 'clientId');  // Also update the existing product state
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.departmentId ?
-                                                <small className="p-invalid">{formik.errors.departmentId}</small> : null}
+                                            {formik.errors.clientId ?
+                                                <small className="p-invalid">{formik.errors.clientId}</small> : null}
                                         </div>
 
 
                                         <div className="field">
-                                            <label htmlFor="name">Name</label>
+                                            <label htmlFor="name"> Name</label>
                                             <Field
                                                 as={InputText}
                                                 id="name"
@@ -426,6 +438,110 @@ const Crud = () => {
                                             {formik.errors.name ?
                                                 <small className="p-invalid">{formik.errors.name}</small> : null}
                                         </div>
+
+                                        <div className="field">
+                                            <label htmlFor="barangay">Barangay</label>
+                                            <Field
+                                                as={InputText}
+                                                id="barangay"
+                                                name="barangay"
+                                                className={classNames({ 'p-invalid': formik.errors.barangay && formik.touched.barangay })}
+                                                onChange={(e) => {
+                                                    formik.handleChange(e);  // Handle the change using Formik
+                                                    onInputChange(e, 'barangay');  // Also update the existing product state
+                                                }}
+                                            />
+
+                                            {formik.errors.barangay ?
+                                                <small className="p-invalid">{formik.errors.barangay}</small> : null}
+                                        </div>
+
+
+                                        <div className="field">
+                                            <label htmlFor="province">Province</label>
+                                            <Field
+                                                as={InputText}
+                                                id="province"
+                                                name="province"
+                                                className={classNames({ 'p-invalid': formik.errors.province && formik.touched.province })}
+                                                onChange={(e) => {
+                                                    formik.handleChange(e);
+                                                    onInputChange(e, 'province');
+                                                }}
+                                            />
+                                            {formik.errors.province ?
+                                                <small className="p-invalid">{formik.errors.province}</small> : null}
+                                        </div>
+
+                                        <div className="field">
+                                            <label htmlFor="city">City</label>
+                                            <Field
+                                                as={InputText}
+                                                id="city"
+                                                name="city"
+                                                className={classNames({ 'p-invalid': formik.errors.city && formik.touched.city })}
+                                                onChange={(e) => {
+                                                    formik.handleChange(e);
+                                                    onInputChange(e, 'city');
+                                                }}
+                                            />
+                                            {formik.errors.city ?
+                                                <small className="p-invalid">{formik.errors.city}</small> : null}
+                                        </div>
+
+
+                                        <div className="field">
+                                            <label htmlFor="zipCode">zipCode</label>
+                                            <Field
+                                                as={InputText}
+                                                id="zipCode"
+                                                name="zipCode"
+                                                className={classNames({ 'p-invalid': formik.errors.zipCode && formik.touched.zipCode })}
+                                                onChange={(e) => {
+                                                    formik.handleChange(e);
+                                                    onInputChange(e, 'zipCode');
+                                                }}
+                                            />
+                                            {formik.errors.zipCode ?
+                                                <small className="p-invalid">{formik.errors.zipCode}</small> : null}
+                                        </div>
+
+                                        <div className="field">
+                                            <label htmlFor="address">Address</label>
+                                            <Field
+                                                as={InputText}
+                                                id="address"
+                                                name="address"
+                                                className={classNames({ 'p-invalid': formik.errors.address && formik.touched.address })}
+                                                onChange={(e) => {
+                                                    formik.handleChange(e);
+                                                    onInputChange(e, 'address');
+                                                }}
+                                            />
+
+                                            {formik.errors.address ?
+                                                <small className="p-invalid">{formik.errors.address}</small> : null}
+                                        </div>
+
+                                        <div className="field">
+                                            <label htmlFor="contact">Contact</label>
+                                            <Field
+                                                as={InputText}
+                                                id="contact"
+                                                name="contact"
+                                                className={classNames({ 'p-invalid': formik.errors.contact && formik.touched.contact })}
+                                                onChange={(e) => {
+                                                    formik.handleChange(e);
+                                                    onInputChange(e, 'contact');
+                                                }}
+                                            />
+
+                                            {formik.errors.contact ?
+                                                <small className="p-invalid">{formik.errors.contact}</small> : null}
+                                        </div>
+
+
+
                                     </Dialog>
                                 </Form>
                             )
@@ -436,7 +552,7 @@ const Crud = () => {
                             <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
                             {product && (
                                 <span>
-                                    Are you sure you want to delete <b>{product.name}</b>?
+                                    Are you sure you want to delete <b>{product.firstName}</b>?
                                 </span>
                             )}
                         </div>

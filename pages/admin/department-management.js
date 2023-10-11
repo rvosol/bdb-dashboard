@@ -113,36 +113,36 @@ const Crud = () => {
 
             try {
                 if (product._id) {
-                    // Update existing product/contact
+                    // Update existing product/department
                     formData.id = product._id
                     const response = await axiosInstance.patch(`/admin/department`, formData);
                     if (response.data.status === 'success') {
-                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Contact Updated', life: 3000 });
+                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'department Updated', life: 3000 });
                     } else {
-                        console.error('Failed to update contact');
+                        console.error('Failed to update department');
                     }
                     fetchProducts()
                     hideDialog()
                     setProduct(emptyProduct)
                 } else {
-                    // Create new product/contact
+                    // Create new product/department
                     const response = await axiosInstance.post('/admin/department', formData);
                     if (response.data.status === 'success') {
-                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Contact Created', life: 3000 });
+                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'department Created', life: 3000 });
                     } else {
-                        console.error('Failed to create contact');
+                        console.error('Failed to create department');
                     }
                     fetchProducts()
                     hideDialog()
                     setProduct(emptyProduct)
                 }
 
-                // Code to refresh the list of products/contacts
+                // Code to refresh the list of products/departments
                 // ...
 
             } catch (error) {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the contact', life: 3000 });
-                console.log('An error occurred while saving the contact', error?.response?.data?.message);
+                toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the department', life: 3000 });
+                console.log('An error occurred while saving the department', error?.response?.data?.message);
             }
         }
     };
@@ -264,7 +264,7 @@ const Crud = () => {
 
     const header = (
         <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-            <h5 className="m-0">Manage Contacts</h5>
+            <h5 className="m-0">Manage departments</h5>
             <span className="block mt-2 md:mt-0 p-input-icon-left">
                 <i className="pi pi-search" />
                 <InputText type="search" onChange={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
@@ -320,9 +320,9 @@ const Crud = () => {
                         rowsPerPageOptions={[5, 10, 25]}
                         className="datatable-responsive"
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} contacts"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} departments"
                         // globalFilter={globalFilter}
-                        emptyMessage="No contacts found."
+                        emptyMessage="No departments found."
                         header={header}
                         responsiveLayout="scroll"
                         loading={loading}
@@ -382,7 +382,7 @@ const Crud = () => {
                                     <Dialog
                                         visible={productDialog}
                                         style={{ width: '450px' }}
-                                        header="Contact Details"
+                                        header="department Details"
                                         modal
                                         className="p-fluid"
                                         footer={ProductDialogFooter}
@@ -391,7 +391,7 @@ const Crud = () => {
 
                                         {console.log(formik.errors.firstName)}
                                         {console.log(formik.touched.firstName)}
-                                        {product.image && <img src={`/demo/images/contact/${product.image}`} alt={product.image} width="150" className="mt-0 mx-auto mb-5 block shadow-2" />}
+                                        {product.image && <img src={`/demo/images/department/${product.image}`} alt={product.image} width="150" className="mt-0 mx-auto mb-5 block shadow-2" />}
                                         <div className="field">
                                             <label htmlFor="departmentId">Department Id</label>
                                             <Field
