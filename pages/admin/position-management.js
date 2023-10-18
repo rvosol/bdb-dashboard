@@ -53,7 +53,7 @@ const Crud = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const response = await axiosInstance.get(`/admin/department`, {
+            const response = await axiosInstance.get(`/admin/position`, {
                 params: {
                     page,
                     limit,
@@ -107,7 +107,7 @@ const Crud = () => {
         if (product.name.trim()) {
             let formData = {};
             formData.name = product.name
-            formData.departmentId = product.departmentId
+            formData.positionId = product.positionId
             formData.status = 'active'
 
 
@@ -115,7 +115,7 @@ const Crud = () => {
                 if (product._id) {
                     // Update existing product/position
                     formData.id = product._id
-                    const response = await axiosInstance.patch(`/admin/department`, formData);
+                    const response = await axiosInstance.patch(`/admin/position`, formData);
                     if (response.data.status === 'success') {
                         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Position Updated', life: 3000 });
                     } else {
@@ -126,7 +126,7 @@ const Crud = () => {
                     setProduct(emptyProduct)
                 } else {
                     // Create new product/position
-                    const response = await axiosInstance.post('/admin/department', formData);
+                    const response = await axiosInstance.post('/admin/position', formData);
                     if (response.data.status === 'success') {
                         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Position Created', life: 3000 });
                     } else {
@@ -161,7 +161,7 @@ const Crud = () => {
     const deleteProduct = async () => {
 
         try {
-            await axiosInstance.delete(`/admin/department/${product._id}`)
+            await axiosInstance.delete(`/admin/position/${product._id}`)
             let _products = products.filter((val) => val._id !== product._id);
             setProducts(_products);
             setDeleteProductDialog(false);
@@ -202,8 +202,8 @@ const Crud = () => {
     const nameBodyTemplate = (rowData) => {
         return (
             <>
-                <span className="p-column-title">Department Id</span>
-                {rowData.departmentId}
+                <span className="p-column-title">User Id Id</span>
+                {rowData.positionId}
             </>
         );
     };
@@ -336,11 +336,11 @@ const Crud = () => {
                     >
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '4rem' }}></Column> */}
                         {/* <Column field="code" header="Code" sortable body={codeBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column> */}
-                        <Column field="departmentId" header="departmentId" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+                        <Column field="positionId" header="Position ID"  body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
 
-                        <Column field="name" header="Name" body={priceBodyTemplate} sortable></Column>
+                        <Column field="name" header="Name" body={priceBodyTemplate} ></Column>
 
-                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate}  headerStyle={{ minWidth: '10rem' }}></Column>
 
                         <Column body={actionBodyTemplate} header="Action" headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
@@ -349,8 +349,8 @@ const Crud = () => {
                     <Formik
                         initialValues={product} // Populate initial values with the current product
                         validationSchema={Yup.object({
-                            departmentId: Yup.string()
-                                .required('Department Id is required'),
+                            positionId: Yup.string()
+                                .required('position Id is required'),
                             name: Yup.string()
                                 .required('Name is required')
                             // ... (add more validations as per your requirements)
@@ -393,20 +393,20 @@ const Crud = () => {
                                         {console.log(formik.touched.firstName)}
                                         {product.image && <img src={`/demo/images/position/${product.image}`} alt={product.image} width="150" className="mt-0 mx-auto mb-5 block shadow-2" />}
                                         <div className="field">
-                                            <label htmlFor="departmentId">Department Id</label>
+                                            <label htmlFor="positionId">Position ID</label>
                                             <Field
                                                 as={InputText}
-                                                id="departmentId"
-                                                name="departmentId"
-                                                className={classNames({ 'p-invalid': formik.errors.departmentId && formik.touched.departmentId })}
+                                                id="positionId"
+                                                name="positionId"
+                                                className={classNames({ 'p-invalid': formik.errors.positionId && formik.touched.positionId })}
                                                 onChange={(e) => {
                                                     formik.handleChange(e);  // Handle the change using Formik
-                                                    onInputChange(e, 'departmentId');  // Also update the existing product state
+                                                    onInputChange(e, 'positionId');  // Also update the existing product state
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.departmentId ?
-                                                <small className="p-invalid">{formik.errors.departmentId}</small> : null}
+                                            {formik.errors.positionId ?
+                                                <small className="p-invalid">{formik.errors.positionId}</small> : null}
                                         </div>
 
 

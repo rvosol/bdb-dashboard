@@ -14,7 +14,8 @@ import { classNames } from 'primereact/utils';
 import React, { useEffect, useRef, useState } from 'react';
 import { ProductService } from '../../demo/service/ProductService';
 import axiosInstance from '../../utils/axiosInstance';
-
+// import Select from 'react-select';
+import { Dropdown } from 'primereact/dropdown';
 import { Formik, Field, ErrorMessage, Form } from 'formik';
 import * as Yup from 'yup';
 
@@ -44,6 +45,8 @@ const Crud = () => {
     const [limit, setLimit] = useState(10);
     const [file, setFile] = useState(null);
     const [totalRecords, setTotalRecords] = useState(0);
+    const [departments, setDepartments] = useState([])
+    const [positions, setPositions] = useState([])
 
     const toast = useRef(null);
     const dt = useRef(null);
@@ -51,7 +54,7 @@ const Crud = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const response = await axiosInstance.get(`/admin/contact`, {
+            const response = await axiosInstance.get(`/admin/subAdmin`, {
                 params: {
                     page,
                     limit,
@@ -59,6 +62,10 @@ const Crud = () => {
                 }
             });
 
+            const responseD = await axiosInstance.get(`/admin/department`);
+            const responseP = await axiosInstance.get(`/admin/position`);
+            setDepartments(responseD?.data?.data?.docs)
+            setPositions(responseP?.data?.data?.docs)
             const data = response.data;
             if (data.status === 'success') {
                 setProducts(data.data.docs);
@@ -113,8 +120,9 @@ const Crud = () => {
             formData.append('mobile', product.mobile);
             formData.append('department', product.department);
             formData.append('position', product.position);
-            formData.append('contactId', product.contactId);
+            formData.append('employeeId', product.employeeId);
             formData.append('status', 'active');
+            formData.append('role', 'admin');
             if (file) {
                 console.log(file, 'file file')
                 formData.append('photo', file);
@@ -122,43 +130,43 @@ const Crud = () => {
 
             try {
                 if (product._id) {
-                    // Update existing product/contact
+                    // Update existing product/User
                     formData.append('id', product._id);
-                    const response = await axiosInstance.patch(`/admin/contact`, formData);
+                    const response = await axiosInstance.patch(`/admin/subAdmin`, formData);
                     if (response.data.status === 'success') {
-                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Contact Updated', life: 3000 });
+                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'User Updated', life: 3000 });
                     } else {
-                        console.error('Failed to update contact');
+                        console.error('Failed to update User');
                     }
                     fetchProducts()
                     hideDialog()
                     setProduct(emptyProduct)
                 } else {
-                    // Create new product/contact
-                    const response = await axiosInstance.post('/admin/contact', formData);
+                    // Create new product/User
+                    const response = await axiosInstance.post('/admin/subAdmin', formData);
                     if (response.data.status === 'success') {
-                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Contact Created', life: 3000 });
+                        toast.current.show({ severity: 'success', summary: 'Successful', detail: 'User Created', life: 3000 });
                     } else {
-                        console.error('Failed to create contact');
+                        console.error('Failed to create User');
                     }
                     fetchProducts()
                     hideDialog()
                     setProduct(emptyProduct)
                 }
 
-                // Code to refresh the list of products/contacts
+                // Code to refresh the list of products/position
                 // ...
 
             } catch (error) {
-                toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the contact', life: 3000 });
-                console.log('An error occurred while saving the contact', error?.response?.data?.message);
+                toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the Users', life: 3000 });
+                console.log('An error occurred while saving the User', error?.response?.data?.message);
             }
         }
     };
 
     const editProduct = (product) => {
         console.log(product)
-        setProduct({ ...product });
+        setProduct({ ...product, department: product?.department?._id, position: product?.position?._id });
         setProductDialog(true);
     };
 
@@ -170,7 +178,7 @@ const Crud = () => {
     const deleteProduct = async () => {
 
         try {
-            await axiosInstance.delete(`/admin/contact/${product._id}`)
+            await axiosInstance.delete(`/admin/subAdmin/${product._id}`)
             let _products = products.filter((val) => val._id !== product._id);
             setProducts(_products);
             setDeleteProductDialog(false);
@@ -248,7 +256,7 @@ const Crud = () => {
         return (
             <>
                 <span className="p-column-title">Position</span>
-                {rowData?.position}
+                {rowData?.position?.name}
             </>
         );
     };
@@ -273,7 +281,7 @@ const Crud = () => {
 
     const header = (
         <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-            <h5 className="m-0">Manage Contacts</h5>
+            <h5 className="m-0">Manage Users</h5>
             <span className="block mt-2 md:mt-0 p-input-icon-left">
                 <i className="pi pi-search" />
                 <InputText type="search" onChange={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
@@ -329,9 +337,9 @@ const Crud = () => {
                         rowsPerPageOptions={[5, 10, 25]}
                         className="datatable-responsive"
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} contacts"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Users"
                         // globalFilter={globalFilter}
-                        emptyMessage="No contacts found."
+                        emptyMessage="No position found."
                         header={header}
                         responsiveLayout="scroll"
                         loading={loading}
@@ -342,7 +350,7 @@ const Crud = () => {
                         }}
                         first={(page - 1) * limit}
                     >
-                         <Column header="Contact ID" field='contactId'></Column>
+                        <Column header="User ID" field='employeeId'></Column>
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '4rem' }}></Column> */}
                         {/* <Column field="code" header="Code" sortable body={codeBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column> */}
                         <Column field="firstName" header="First Name"  body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
@@ -358,8 +366,8 @@ const Crud = () => {
                     <Formik
                         initialValues={product} // Populate initial values with the current product
                         validationSchema={Yup.object({
-                            contactId: Yup.string()
-                                .required('Contact Id is required'),
+                            employeeId: Yup.string()
+                                .required('User Id is required'),
                             firstName: Yup.string()
                                 .required('First Name is required'),
                             lastName: Yup.string()
@@ -368,17 +376,17 @@ const Crud = () => {
                                 .email('Invalid email address')
                                 .required('Email is required'),
                             middleName: Yup.string()
-                                .required('Last Name is required'),
+                                .required('Middle Name is required'),
                             nickName: Yup.string()
-                                .required('Last Name is required'),
+                                .required('Nick Name is required'),
                             phone: Yup.string()
-                                .required('Last Name is required'),
+                                .required('Phone  is required'),
                             mobile: Yup.string()
-                                .required('Last Name is required'),
+                                .required('Mobile is required'),
                             department: Yup.string()
-                                .required('Last Name is required'),
+                                .required('Department is required'),
                             position: Yup.string()
-                                .required('Last Name is required'),
+                                .required('Position is required'),
                             // ... (add more validations as per your requirements)
                         })}
                         onSubmit={(values, { setSubmitting }) => {
@@ -408,31 +416,31 @@ const Crud = () => {
                                     <Dialog
                                         visible={productDialog}
                                         style={{ width: '450px' }}
-                                        header="Contact Details"
+                                        header="User Details"
                                         modal
                                         className="p-fluid"
                                         footer={ProductDialogFooter}
                                         onHide={hideDialog}
                                     >
 
-                                        {console.log(formik.errors.firstName)}
+                                        {console.log(formik.errors)}
                                         {console.log(formik.touched.firstName)}
-                                        {product.image && <img src={`/demo/images/contact/${product.image}`} alt={product.image} width="150" className="mt-0 mx-auto mb-5 block shadow-2" />}
+                                        {product.image && <img src={`/demo/images/User/${product.image}`} alt={product.image} width="150" className="mt-0 mx-auto mb-5 block shadow-2" />}
                                         <div className="field">
-                                            <label htmlFor="firstName">Contact ID</label>
+                                            <label htmlFor="firstName">User Id</label>
                                             <Field
                                                 as={InputText}
-                                                id="contactId"
-                                                name="contactId"
-                                                className={classNames({ 'p-invalid': formik.errors.contactId && formik.touched.contactId })}
+                                                id="employeeId"
+                                                name="employeeId"
+                                                className={classNames({ 'p-invalid': formik.errors.employeeId && formik.touched.employeeId })}
                                                 onChange={(e) => {
                                                     formik.handleChange(e);  // Handle the change using Formik
-                                                    onInputChange(e, 'contactId');  // Also update the existing product state
+                                                    onInputChange(e, 'employeeId');  // Also update the existing product state
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.contactId ?
-                                                <small className="p-invalid">{formik.errors.contactId}</small> : null}
+                                            {formik.errors.employeeId ?
+                                                <small className="p-invalid">{formik.errors.employeeId}</small> : null}
                                         </div>
 
 
@@ -556,38 +564,44 @@ const Crud = () => {
                                         </div>
 
                                         <div className="field">
-                                            <label htmlFor="department">Department</label>
-                                            <Field
-                                                as={InputText}
-                                                id="department"
-                                                name="department"
-                                                className={classNames({ 'p-invalid': formik.errors.department && formik.touched.department })}
-                                                onChange={(e) => {
-                                                    formik.handleChange(e);
-                                                    onInputChange(e, 'department');
-                                                }}
-                                            />
+    <label htmlFor="department">Department</label>
+    <Dropdown
+        id="department"
+        value={formik.values.department}  
+        options={departments.map(dept => ({ label: dept.name, value: dept._id }))}  
+        className={classNames("w-full ", { 'p-invalid': formik.errors.department && formik.touched.department })}
+        onChange={(e) => {
+            formik.setFieldValue('department', e.value); // set the value in formik
+            onInputChange({target: {value: e.value, name: 'department'}}, 'department');  // Also update the existing product state with new department id
+        }}
+        optionLabel="label"
+        placeholder="Select a Department"
+    />
+    {formik.errors.department ?
+        <small className="p-invalid">{formik.errors.department}</small> : null}
+</div>
 
-                                            {formik.errors.department ?
-                                                <small className="p-invalid">{formik.errors.department}</small> : null}
-                                        </div>
+
+                                       
+
 
                                         <div className="field">
-                                            <label htmlFor="position">Position</label>
-                                            <Field
-                                                as={InputText}
-                                                id="position"
-                                                name="position"
-                                                className={classNames({ 'p-invalid': formik.errors.position && formik.touched.position })}
-                                                onChange={(e) => {
-                                                    formik.handleChange(e);
-                                                    onInputChange(e, 'position');
-                                                }}
-                                            />
-
-                                            {formik.errors.position ?
-                                                <small className="p-invalid">{formik.errors.position}</small> : null}
-                                        </div>
+    <label htmlFor="position">Position</label>
+    <Dropdown
+        id="position"
+        value={formik.values.position}  
+        options={positions.map(dept => ({ label: dept.name, value: dept._id }))}  
+        className={classNames("w-full ", { 'p-invalid': formik.errors.position && formik.touched.position })}
+        onChange={(e) => {
+            formik.setFieldValue('position', e.value); // set the value in formik
+            onInputChange({target: {value: e.value, name: 'position'}}, 'position');  // Also update the existing product state with new position id
+        }}
+        optionLabel="label"
+        placeholder="Select a position"
+    />
+    {formik.errors.position ?
+        <small className="p-invalid">{formik.errors.position}</small> : null}
+</div>
 
                                         {!file && product._id && product.photo && (
                                             <div className="existing-image">

@@ -17,6 +17,7 @@ import axiosInstance from '../../utils/axiosInstance';
 
 import { Formik, Field, ErrorMessage, Form } from 'formik';
 import * as Yup from 'yup';
+import { Dropdown } from 'primereact/dropdown';
 
 const Crud = () => {
     let emptyProduct = {
@@ -44,7 +45,7 @@ const Crud = () => {
     const [limit, setLimit] = useState(10);
     const [file, setFile] = useState(null);
     const [totalRecords, setTotalRecords] = useState(0);
-
+    const [contacts, setContacts] = useState([])
     const toast = useRef(null);
     const dt = useRef(null);
 
@@ -58,6 +59,8 @@ const Crud = () => {
                     q: globalFilter || '',
                 }
             });
+            const responseD = await axiosInstance.get(`/admin/contact`);
+            setContacts(responseD?.data?.data?.docs)
 
             const data = response.data;
             if (data.status === 'success') {
@@ -116,6 +119,7 @@ const Crud = () => {
 
             try {
                 if (product._id) {
+                    formData.id = product._id
                     const response = await axiosInstance.patch(`/admin/clients`, formData);
                     if (response.data.status === 'success') {
                         toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Client Updated', life: 3000 });
@@ -150,7 +154,7 @@ const Crud = () => {
 
     const editProduct = (product) => {
         console.log(product)
-        setProduct({ ...product });
+        setProduct({ ...product, contact: product?.contact?._id });
         setProductDialog(true);
     };
 
@@ -335,15 +339,15 @@ const Crud = () => {
                         first={(page - 1) * limit}
                     >
 
-                        <Column field="clientId" header="clientId" headerStyle={{ minWidth: '15rem' }}></Column>
-                        <Column field="name" header="name" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+                        <Column field="clientId" header="Client ID" headerStyle={{ minWidth: '15rem' }}></Column>
+                        <Column field="name" header="name"  body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
                         {/* <Column header="Image" body={imageBodyTemplate}></Column> */}
-                        <Column field="barangay" header="Country Code" body={priceBodyTemplate} sortable></Column>
-                        <Column field="province" header="Province" sortable body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
-                        <Column field="city" header="City" body={ratingBodyTemplate} sortable></Column>
-                        <Column field="zipCode" header="ZipCode" sortable></Column>
-                        <Column field="address" header="Address" body={ratingBodyTemplate} sortable></Column>
-                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="barangay" header="Country Code" body={priceBodyTemplate} ></Column>
+                        <Column field="province" header="Province"  body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="city" header="City" body={ratingBodyTemplate} ></Column>
+                        <Column field="zipCode" header="ZipCode" ></Column>
+                        <Column field="address" header="Address" body={ratingBodyTemplate} ></Column>
+                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate}  headerStyle={{ minWidth: '10rem' }}></Column>
                         <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
 
@@ -405,7 +409,7 @@ const Crud = () => {
                                     >
 
                                         <div className="field">
-                                            <label htmlFor="firstName">Client Id</label>
+                                            <label htmlFor="firstName">Client ID</label>
                                             <Field
                                                 as={InputText}
                                                 id="clientId"
@@ -523,7 +527,7 @@ const Crud = () => {
                                                 <small className="p-invalid">{formik.errors.address}</small> : null}
                                         </div>
 
-                                        <div className="field">
+                                        {/* <div className="field">
                                             <label htmlFor="contact">Contact</label>
                                             <Field
                                                 as={InputText}
@@ -538,7 +542,25 @@ const Crud = () => {
 
                                             {formik.errors.contact ?
                                                 <small className="p-invalid">{formik.errors.contact}</small> : null}
-                                        </div>
+                                        </div> */}
+
+                                        <div className="field">
+    <label htmlFor="contact">Contact</label>
+    <Dropdown
+        id="contact"
+        value={formik.values.contact}  
+        options={contacts.map(dept => ({ label: dept.firstName, value: dept._id }))}  
+        className={classNames("w-full ", { 'p-invalid': formik.errors.contact && formik.touched.contact })}
+        onChange={(e) => {
+            formik.setFieldValue('contact', e.value); // set the value in formik
+            onInputChange({target: {value: e.value, name: 'contact'}}, 'contact');  // Also update the existing product state with new contact id
+        }}
+        optionLabel="label"
+        placeholder="Select a contact"
+    />
+    {formik.errors.contact ?
+        <small className="p-invalid">{formik.errors.contact}</small> : null}
+</div>
 
 
 

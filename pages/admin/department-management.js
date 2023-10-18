@@ -264,7 +264,7 @@ const Crud = () => {
 
     const header = (
         <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-            <h5 className="m-0">Manage departments</h5>
+            <h5 className="m-0">Manage Departments</h5>
             <span className="block mt-2 md:mt-0 p-input-icon-left">
                 <i className="pi pi-search" />
                 <InputText type="search" onChange={(e) => setGlobalFilter(e.target.value)} placeholder="Search..." />
@@ -336,11 +336,11 @@ const Crud = () => {
                     >
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '4rem' }}></Column> */}
                         {/* <Column field="code" header="Code" sortable body={codeBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column> */}
-                        <Column field="departmentId" header="departmentId" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+                        <Column field="departmentId" header="Department ID"  body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
 
-                        <Column field="name" header="Name" body={priceBodyTemplate} sortable></Column>
+                        <Column field="name" header="Name" body={priceBodyTemplate} ></Column>
 
-                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate}  headerStyle={{ minWidth: '10rem' }}></Column>
 
                         <Column body={actionBodyTemplate} header="Action" headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
@@ -382,7 +382,7 @@ const Crud = () => {
                                     <Dialog
                                         visible={productDialog}
                                         style={{ width: '450px' }}
-                                        header="department Details"
+                                        header="Department Details"
                                         modal
                                         className="p-fluid"
                                         footer={ProductDialogFooter}
@@ -393,7 +393,7 @@ const Crud = () => {
                                         {console.log(formik.touched.firstName)}
                                         {product.image && <img src={`/demo/images/department/${product.image}`} alt={product.image} width="150" className="mt-0 mx-auto mb-5 block shadow-2" />}
                                         <div className="field">
-                                            <label htmlFor="departmentId">Department Id</label>
+                                            <label htmlFor="departmentId">Department ID</label>
                                             <Field
                                                 as={InputText}
                                                 id="departmentId"
