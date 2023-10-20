@@ -399,15 +399,26 @@ const Crud = () => {
                     >
                         {formik => {
                             const ProductDialogFooter = (
-                                <>
-                                    <Button label="Close" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-                                    <Button
-                                        label="Save"
-                                        icon="pi pi-check"
-                                        className="p-button-text"
-                                        onClick={formik.handleSubmit}  // Manually trigger the submit event
-                                    />
-                                </>
+                              <>
+                                <Button
+                                  label="Password Reset"
+                                  icon="pi pi-envelope"
+                                  className="p-button-text"
+                                  onClick={formik.handleSubmit} // Manually trigger the submit event
+                                />
+                                <Button
+                                  label="Close"
+                                  icon="pi pi-times"
+                                  className="p-button-text"
+                                  onClick={hideDialog}
+                                />
+                                <Button
+                                  label="Save"
+                                  icon="pi pi-check"
+                                  className="p-button-text"
+                                  onClick={formik.handleSubmit} // Manually trigger the submit event
+                                />
+                              </>
                             );
                             return (
                                 <Form>
