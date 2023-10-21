@@ -18,18 +18,18 @@ import axiosInstance from '../../utils/axiosInstance';
 import { Dropdown } from 'primereact/dropdown';
 import { Formik, Field, ErrorMessage, Form } from 'formik';
 import * as Yup from 'yup';
-
 const Crud = () => {
     let emptyProduct = {
-        id: null,
-        name: '',
-        image: null,
-        description: '',
-        category: null,
-        price: 0,
-        quantity: 0,
-        rating: 0,
-        inventoryStatus: 'INSTOCK'
+        employeeId: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        middleName: '',
+        nickName: '',
+        phone: '',
+        mobile: '',
+        department: '',
+        position: '',
     };
 
     const [products, setProducts] = useState(null);
@@ -50,6 +50,7 @@ const Crud = () => {
 
     const toast = useRef(null);
     const dt = useRef(null);
+    const formikRef = useRef();
 
     const fetchProducts = async () => {
         try {
@@ -96,6 +97,7 @@ const Crud = () => {
     const hideDialog = () => {
         setSubmitted(false);
         setProductDialog(false);
+        formikRef.current.resetForm(); 
     };
 
     const hideDeleteProductDialog = () => {
@@ -353,12 +355,12 @@ const Crud = () => {
                         <Column header="User ID" field='employeeId'></Column>
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '4rem' }}></Column> */}
                         {/* <Column field="code" header="Code" sortable body={codeBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column> */}
-                        <Column field="firstName" header="First Name"  body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+                        <Column field="firstName" header="First Name" body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
                         <Column header="Image" body={imageBodyTemplate}></Column>
                         <Column field="email" header="Email" body={priceBodyTemplate} ></Column>
-                        <Column field="mobile" header="Mobile"  body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="mobile" header="Mobile" body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                         <Column field="position" header="Position" body={ratingBodyTemplate} ></Column>
-                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate}  headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                         <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
 
@@ -396,6 +398,7 @@ const Crud = () => {
                             console.log(values)
                         }}
                         enableReinitialize={true}
+                        innerRef={formikRef}
                     >
                         {formik => {
                             const ProductDialogFooter = (
@@ -439,7 +442,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.employeeId ?
+                                            {formik.errors.employeeId && formik.touched.employeeId ?
                                                 <small className="p-invalid">{formik.errors.employeeId}</small> : null}
                                         </div>
 
@@ -457,7 +460,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.firstName ?
+                                            {formik.errors.firstName && formik.touched.firstName ?
                                                 <small className="p-invalid">{formik.errors.firstName}</small> : null}
                                         </div>
 
@@ -474,7 +477,7 @@ const Crud = () => {
                                                 }}
                                             />
 
-                                            {formik.errors.lastName ?
+                                            {formik.errors.lastName && formik.touched.lastName ?
                                                 <small className="p-invalid">{formik.errors.lastName}</small> : null}
                                         </div>
 
@@ -491,7 +494,7 @@ const Crud = () => {
                                                     onInputChange(e, 'middleName');
                                                 }}
                                             />
-                                            {formik.errors.middleName ?
+                                            {formik.errors.middleName && formik.touched.middleName ?
                                                 <small className="p-invalid">{formik.errors.middleName}</small> : null}
                                         </div>
 
@@ -507,7 +510,7 @@ const Crud = () => {
                                                     onInputChange(e, 'nickName');
                                                 }}
                                             />
-                                            {formik.errors.nickName ?
+                                            {formik.errors.nickName && formik.touched.nickName ?
                                                 <small className="p-invalid">{formik.errors.nickName}</small> : null}
                                         </div>
 
@@ -525,7 +528,7 @@ const Crud = () => {
                                                     onInputChange(e, 'email');
                                                 }}
                                             />
-                                            {formik.errors.email ?
+                                            {formik.errors.email && formik.touched.email ?
                                                 <small className="p-invalid">{formik.errors.email}</small> : null}
                                         </div>
 
@@ -542,7 +545,7 @@ const Crud = () => {
                                                 }}
                                             />
 
-                                            {formik.errors.phone ?
+                                            {formik.errors.phone && formik.touched.phone ?
                                                 <small className="p-invalid">{formik.errors.phone}</small> : null}
                                         </div>
 
@@ -559,49 +562,49 @@ const Crud = () => {
                                                 }}
                                             />
 
-                                            {formik.errors.mobile ?
+                                            {formik.errors.mobile && formik.touched.mobile ?
                                                 <small className="p-invalid">{formik.errors.mobile}</small> : null}
                                         </div>
 
                                         <div className="field">
-    <label htmlFor="department">Department</label>
-    <Dropdown
-        id="department"
-        value={formik.values.department}  
-        options={departments.map(dept => ({ label: dept.name, value: dept._id }))}  
-        className={classNames("w-full ", { 'p-invalid': formik.errors.department && formik.touched.department })}
-        onChange={(e) => {
-            formik.setFieldValue('department', e.value); // set the value in formik
-            onInputChange({target: {value: e.value, name: 'department'}}, 'department');  // Also update the existing product state with new department id
-        }}
-        optionLabel="label"
-        placeholder="Select a Department"
-    />
-    {formik.errors.department ?
-        <small className="p-invalid">{formik.errors.department}</small> : null}
-</div>
+                                            <label htmlFor="department">Department</label>
+                                            <Dropdown
+                                                id="department"
+                                                value={formik.values.department}
+                                                options={departments.map(dept => ({ label: dept.name, value: dept._id }))}
+                                                className={classNames("w-full ", { 'p-invalid': formik.errors.department && formik.touched.department })}
+                                                onChange={(e) => {
+                                                    formik.setFieldValue('department', e.value); // set the value in formik
+                                                    onInputChange({ target: { value: e.value, name: 'department' } }, 'department');  // Also update the existing product state with new department id
+                                                }}
+                                                optionLabel="label"
+                                                placeholder="Select a Department"
+                                            />
+                                            {formik.errors.department && formik.touched.department ?
+                                                <small className="p-invalid">{formik.errors.department}</small> : null}
+                                        </div>
 
 
-                                       
+
 
 
                                         <div className="field">
-    <label htmlFor="position">Position</label>
-    <Dropdown
-        id="position"
-        value={formik.values.position}  
-        options={positions.map(dept => ({ label: dept.name, value: dept._id }))}  
-        className={classNames("w-full ", { 'p-invalid': formik.errors.position && formik.touched.position })}
-        onChange={(e) => {
-            formik.setFieldValue('position', e.value); // set the value in formik
-            onInputChange({target: {value: e.value, name: 'position'}}, 'position');  // Also update the existing product state with new position id
-        }}
-        optionLabel="label"
-        placeholder="Select a position"
-    />
-    {formik.errors.position ?
-        <small className="p-invalid">{formik.errors.position}</small> : null}
-</div>
+                                            <label htmlFor="position">Position</label>
+                                            <Dropdown
+                                                id="position"
+                                                value={formik.values.position}
+                                                options={positions.map(dept => ({ label: dept.name, value: dept._id }))}
+                                                className={classNames("w-full ", { 'p-invalid': formik.errors.position && formik.touched.position })}
+                                                onChange={(e) => {
+                                                    formik.setFieldValue('position', e.value); // set the value in formik
+                                                    onInputChange({ target: { value: e.value, name: 'position' } }, 'position');  // Also update the existing product state with new position id
+                                                }}
+                                                optionLabel="label"
+                                                placeholder="Select a position"
+                                            />
+                                            {formik.errors.position && formik.touched.position ?
+                                                <small className="p-invalid">{formik.errors.position}</small> : null}
+                                        </div>
 
                                         {!file && product._id && product.photo && (
                                             <div className="existing-image">

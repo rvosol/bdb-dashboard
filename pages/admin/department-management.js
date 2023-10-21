@@ -20,15 +20,8 @@ import * as Yup from 'yup';
 
 const Crud = () => {
     let emptyProduct = {
-        id: null,
         name: '',
-        image: null,
-        description: '',
-        category: null,
-        price: 0,
-        quantity: 0,
-        rating: 0,
-        inventoryStatus: 'INSTOCK'
+        departmentId: '',
     };
 
     const [products, setProducts] = useState(null);
@@ -47,6 +40,7 @@ const Crud = () => {
 
     const toast = useRef(null);
     const dt = useRef(null);
+    const formikRef = useRef();
 
     console.log(totalRecords)
 
@@ -91,6 +85,7 @@ const Crud = () => {
     const hideDialog = () => {
         setSubmitted(false);
         setProductDialog(false);
+        formikRef.current.resetForm(); 
     };
 
     const hideDeleteProductDialog = () => {
@@ -362,6 +357,7 @@ const Crud = () => {
                             console.log(values)
                         }}
                         enableReinitialize={true}
+                        innerRef={formikRef}
                     >
                         {formik => {
                             const ProductDialogFooter = (
@@ -389,8 +385,6 @@ const Crud = () => {
                                         onHide={hideDialog}
                                     >
 
-                                        {console.log(formik.errors.firstName)}
-                                        {console.log(formik.touched.firstName)}
                                         {product.image && <img src={`/demo/images/department/${product.image}`} alt={product.image} width="150" className="mt-0 mx-auto mb-5 block shadow-2" />}
                                         <div className="field">
                                             <label htmlFor="departmentId">Department ID</label>
@@ -405,7 +399,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.departmentId ?
+                                            {formik.errors.departmentId && formik.touched.departmentId  ?
                                                 <small className="p-invalid">{formik.errors.departmentId}</small> : null}
                                         </div>
 
@@ -423,7 +417,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.name ?
+                                            {formik.errors.name && formik.touched.name  ?
                                                 <small className="p-invalid">{formik.errors.name}</small> : null}
                                         </div>
                                     </Dialog>
