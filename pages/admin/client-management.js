@@ -18,18 +18,17 @@ import axiosInstance from '../../utils/axiosInstance';
 import { Formik, Field, ErrorMessage, Form } from 'formik';
 import * as Yup from 'yup';
 import { Dropdown } from 'primereact/dropdown';
-
 const Crud = () => {
     let emptyProduct = {
-        id: null,
+        clientId: '',
         name: '',
-        image: null,
-        description: '',
-        category: null,
-        price: 0,
-        quantity: 0,
-        rating: 0,
-        inventoryStatus: 'INSTOCK'
+        barangay: '',
+        province: '',
+        category: '',
+        zipCode: '',
+        address: '',
+        contact: '',
+        city: ''
     };
 
     const [products, setProducts] = useState(null);
@@ -48,6 +47,7 @@ const Crud = () => {
     const [contacts, setContacts] = useState([])
     const toast = useRef(null);
     const dt = useRef(null);
+    const formikRef = useRef();
 
     const fetchProducts = async () => {
         try {
@@ -92,6 +92,7 @@ const Crud = () => {
     const hideDialog = () => {
         setSubmitted(false);
         setProductDialog(false);
+        formikRef.current.resetForm(); 
     };
 
     const hideDeleteProductDialog = () => {
@@ -380,6 +381,7 @@ const Crud = () => {
                             console.log(values)
                         }}
                         enableReinitialize={true}
+                        innerRef={formikRef}
                     >
                         {formik => {
                             const ProductDialogFooter = (
@@ -397,7 +399,7 @@ const Crud = () => {
                                 <Form>
 
 
-
+{console.log(formik?.errors, formik?.touched, 'formik')}
                                     <Dialog
                                         visible={productDialog}
                                         style={{ width: '450px' }}
@@ -409,7 +411,7 @@ const Crud = () => {
                                     >
 
                                         <div className="field">
-                                            <label htmlFor="firstName">Client ID</label>
+                                            <label htmlFor="clientId">Client ID</label>
                                             <Field
                                                 as={InputText}
                                                 id="clientId"
@@ -421,7 +423,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.clientId ?
+                                            {formik.errors.clientId && formik.touched.clientId  ?
                                                 <small className="p-invalid">{formik.errors.clientId}</small> : null}
                                         </div>
 
@@ -439,7 +441,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.name ?
+                                            {formik.errors.name && formik.touched.name  ?
                                                 <small className="p-invalid">{formik.errors.name}</small> : null}
                                         </div>
 
@@ -456,7 +458,7 @@ const Crud = () => {
                                                 }}
                                             />
 
-                                            {formik.errors.barangay ?
+                                            {formik.errors.barangay && formik.touched.barangay ?
                                                 <small className="p-invalid">{formik.errors.barangay}</small> : null}
                                         </div>
 
@@ -473,7 +475,7 @@ const Crud = () => {
                                                     onInputChange(e, 'province');
                                                 }}
                                             />
-                                            {formik.errors.province ?
+                                            {formik.errors.province && formik.touched.province ?
                                                 <small className="p-invalid">{formik.errors.province}</small> : null}
                                         </div>
 
@@ -489,7 +491,7 @@ const Crud = () => {
                                                     onInputChange(e, 'city');
                                                 }}
                                             />
-                                            {formik.errors.city ?
+                                            {formik.errors.city && formik.touched.city ?
                                                 <small className="p-invalid">{formik.errors.city}</small> : null}
                                         </div>
 
@@ -506,7 +508,7 @@ const Crud = () => {
                                                     onInputChange(e, 'zipCode');
                                                 }}
                                             />
-                                            {formik.errors.zipCode ?
+                                            {formik.errors.zipCode && formik.touched.zipCode ?
                                                 <small className="p-invalid">{formik.errors.zipCode}</small> : null}
                                         </div>
 
@@ -523,7 +525,7 @@ const Crud = () => {
                                                 }}
                                             />
 
-                                            {formik.errors.address ?
+                                            {formik.errors.address && formik.touched.address ?
                                                 <small className="p-invalid">{formik.errors.address}</small> : null}
                                         </div>
 
@@ -558,7 +560,7 @@ const Crud = () => {
         optionLabel="label"
         placeholder="Select a contact"
     />
-    {formik.errors.contact ?
+    {formik.errors.contact && formik.touched.contact ?
         <small className="p-invalid">{formik.errors.contact}</small> : null}
 </div>
 

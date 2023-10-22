@@ -17,18 +17,18 @@ import axiosInstance from '../../utils/axiosInstance';
 
 import { Formik, Field, ErrorMessage, Form } from 'formik';
 import * as Yup from 'yup';
-
 const Crud = () => {
     let emptyProduct = {
-        id: null,
-        name: '',
-        image: null,
-        description: '',
-        category: null,
-        price: 0,
-        quantity: 0,
-        rating: 0,
-        inventoryStatus: 'INSTOCK'
+        contactId: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        middleName: '',
+        nickName: '',
+        phone: '',
+        mobile: '',
+        department: '',
+        position: '',
     };
 
     const [products, setProducts] = useState(null);
@@ -47,6 +47,7 @@ const Crud = () => {
 
     const toast = useRef(null);
     const dt = useRef(null);
+    const formikRef = useRef();
 
     const fetchProducts = async () => {
         try {
@@ -89,6 +90,7 @@ const Crud = () => {
     const hideDialog = () => {
         setSubmitted(false);
         setProductDialog(false);
+        formikRef.current.resetForm(); 
     };
 
     const hideDeleteProductDialog = () => {
@@ -388,6 +390,7 @@ const Crud = () => {
                             console.log(values)
                         }}
                         enableReinitialize={true}
+                        innerRef={formikRef}
                     >
                         {formik => {
                             const ProductDialogFooter = (
@@ -431,7 +434,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.contactId ?
+                                            {formik.errors.contactId && formik.touched.contactId ?
                                                 <small className="p-invalid">{formik.errors.contactId}</small> : null}
                                         </div>
 
@@ -449,7 +452,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.firstName ?
+                                            {formik.errors.firstName && formik.touched.firstName ?
                                                 <small className="p-invalid">{formik.errors.firstName}</small> : null}
                                         </div>
 
@@ -466,7 +469,7 @@ const Crud = () => {
                                                 }}
                                             />
 
-                                            {formik.errors.lastName ?
+                                            {formik.errors.lastName && formik.touched.lastName ?
                                                 <small className="p-invalid">{formik.errors.lastName}</small> : null}
                                         </div>
 
@@ -483,7 +486,7 @@ const Crud = () => {
                                                     onInputChange(e, 'middleName');
                                                 }}
                                             />
-                                            {formik.errors.middleName ?
+                                            {formik.errors.middleName && formik.touched.middleName ?
                                                 <small className="p-invalid">{formik.errors.middleName}</small> : null}
                                         </div>
 
@@ -499,7 +502,7 @@ const Crud = () => {
                                                     onInputChange(e, 'nickName');
                                                 }}
                                             />
-                                            {formik.errors.nickName ?
+                                            {formik.errors.nickName && formik.touched.nickName ?
                                                 <small className="p-invalid">{formik.errors.nickName}</small> : null}
                                         </div>
 
@@ -517,7 +520,7 @@ const Crud = () => {
                                                     onInputChange(e, 'email');
                                                 }}
                                             />
-                                            {formik.errors.email ?
+                                            {formik.errors.email && formik.touched.email ?
                                                 <small className="p-invalid">{formik.errors.email}</small> : null}
                                         </div>
 
@@ -534,7 +537,7 @@ const Crud = () => {
                                                 }}
                                             />
 
-                                            {formik.errors.phone ?
+                                            {formik.errors.phone && formik.touched.phone ?
                                                 <small className="p-invalid">{formik.errors.phone}</small> : null}
                                         </div>
 
@@ -551,7 +554,7 @@ const Crud = () => {
                                                 }}
                                             />
 
-                                            {formik.errors.mobile ?
+                                            {formik.errors.mobile && formik.touched.mobile ?
                                                 <small className="p-invalid">{formik.errors.mobile}</small> : null}
                                         </div>
 
@@ -568,7 +571,7 @@ const Crud = () => {
                                                 }}
                                             />
 
-                                            {formik.errors.department ?
+                                            {formik.errors.department && formik.touched.department ?
                                                 <small className="p-invalid">{formik.errors.department}</small> : null}
                                         </div>
 
@@ -585,7 +588,7 @@ const Crud = () => {
                                                 }}
                                             />
 
-                                            {formik.errors.position ?
+                                            {formik.errors.position && formik.touched.position ?
                                                 <small className="p-invalid">{formik.errors.position}</small> : null}
                                         </div>
 

@@ -20,15 +20,8 @@ import * as Yup from 'yup';
 
 const Crud = () => {
     let emptyProduct = {
-        id: null,
         name: '',
-        image: null,
-        description: '',
-        category: null,
-        price: 0,
-        quantity: 0,
-        rating: 0,
-        inventoryStatus: 'INSTOCK'
+        positionId: '',
     };
 
     const [products, setProducts] = useState(null);
@@ -47,6 +40,7 @@ const Crud = () => {
 
     const toast = useRef(null);
     const dt = useRef(null);
+    const formikRef = useRef();
 
     console.log(totalRecords)
 
@@ -91,6 +85,7 @@ const Crud = () => {
     const hideDialog = () => {
         setSubmitted(false);
         setProductDialog(false);
+        formikRef.current.resetForm(); 
     };
 
     const hideDeleteProductDialog = () => {
@@ -362,6 +357,7 @@ const Crud = () => {
                             console.log(values)
                         }}
                         enableReinitialize={true}
+                        innerRef={formikRef}
                     >
                         {formik => {
                             const ProductDialogFooter = (
@@ -405,7 +401,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.positionId ?
+                                            {formik.errors.positionId && formik.touched.positionId ?
                                                 <small className="p-invalid">{formik.errors.positionId}</small> : null}
                                         </div>
 
@@ -423,7 +419,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.name ?
+                                            {formik.errors.name && formik.touched.name  ?
                                                 <small className="p-invalid">{formik.errors.name}</small> : null}
                                         </div>
                                     </Dialog>
