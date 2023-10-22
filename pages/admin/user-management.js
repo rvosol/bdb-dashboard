@@ -317,8 +317,20 @@ const Crud = () => {
         </>
     );
 
-    console.log(product, file, 'product')
+    const [passwordEmailSending,setPasswordEmailSending] = useState(false)
+    const handlePasswordReset = (userData) => {
+        setPasswordEmailSending(true)
+        
 
+        axiosInstance
+          .patch(`admin/subAdmin/passwordReset/send/${userData._id}`, {})
+          .then((response) => {})
+          .catch((err) => {
+            console.error(err?.response?.data?.error);
+          }).finally(() => {
+              setPasswordEmailSending(false);
+          });
+    };
     return (
         <div className="grid crud-demo">
             <div className="col-12">
@@ -404,10 +416,10 @@ const Crud = () => {
                             const ProductDialogFooter = (
                               <>
                                 <Button
-                                  label="Password Reset"
+                                  label= {passwordEmailSending? "Processing" :"Password Reset"} 
                                   icon="pi pi-envelope"
                                   className="p-button-text"
-                                  onClick={formik.handleSubmit} // Manually trigger the submit event
+                                  onClick={()=>{handlePasswordReset(formik?.initialValues);}} // Manually trigger the submit event
                                 />
                                 <Button
                                   label="Close"
