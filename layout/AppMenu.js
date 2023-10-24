@@ -256,16 +256,16 @@ const AppMenu = () => {
         //                     icon: 'pi pi-fw pi-user-plus',
         //                     to: '/auth/register'
         //                 },
-                        {
-                            label: 'Forgot Password',
-                            icon: 'pi pi-fw pi-question',
-                            to: '/auth/forgotpassword'
-                        },
-                        {
-                            label: 'New Password',
-                            icon: 'pi pi-fw pi-cog',
-                            to: '/auth/reset-password'
-        },
+        //                 {
+        //                     label: 'Forgot Password',
+        //                     icon: 'pi pi-fw pi-question',
+        //                     to: '/auth/forgotpassword'
+        //                 },
+        //                 {
+        //                     label: 'New Password',
+        //                     icon: 'pi pi-fw pi-cog',
+        //                     to: '/auth/reset-password'
+        // },
                         
         //                 {
         //                     label: 'Verification',
