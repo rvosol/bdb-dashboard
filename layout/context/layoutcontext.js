@@ -6,14 +6,16 @@ export const LayoutContext = React.createContext();
 export const LayoutProvider = (props) => {
     const [breadcrumbs, setBreadcrumbs] = useState([]);
     const [layoutConfig, setLayoutConfig] = useState({
-        ripple: false,
+        ripple: true,
         inputStyle: 'outlined',
         menuMode: 'static',
-        menuTheme: 'colorScheme',
+        menuTheme: "transparent",
         colorScheme: 'light',
-        theme: 'indigo',
+        theme: 'blue',
         scale: 14
     });
+
+    console.log(layoutConfig)
 
     const [layoutState, setLayoutState] = useState({
         staticMenuDesktopInactive: false,

@@ -24,9 +24,9 @@ const AppBreadcrumb = (props) => {
     console.log(router.pathname)
 
     let firstLabel = true
-    if(router.pathname  !== "/apps/calendar" || router.pathname  !== "/dashboard-profile") {
-        firstLabel = false
-    }
+    // if(router.pathname  !== "/apps/calendar" || router.pathname  !== "/dashboard-profile") {
+    //     firstLabel = false
+    // }
     return (
         <div className={props.className}>
             <nav className="layout-breadcrumb">
@@ -39,7 +39,7 @@ const AppBreadcrumb = (props) => {
                                    
                                             <React.Fragment key={index}>
                                                 {firstLabel && (
-                                                    <li className="layout-breadcrumb-chevron"> / </li>
+                                                    <li className="layout-breadcrumb-chevron"> {">"} </li>
                                                 )}
                                                 
                                                 <li key={index}>{label}</li>

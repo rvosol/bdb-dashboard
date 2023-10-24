@@ -26,11 +26,11 @@ const AppProfileSidebar = () => {
                             </span>
                             <div className="ml-3">
                                 <span className="mb-2 font-semibold">Profile</span>
-                                <p className="text-color-secondary m-0">Lorem ipsum date visale</p>
+                                <p className="text-color-secondary m-0">Your user information.</p>
                             </div>
                         </a>
                     </li>
-                    <li>
+                    {/* <li>
                         <a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
                             <span>
                                 <i className="pi pi-money-bill text-xl text-primary"></i>
@@ -40,8 +40,8 @@ const AppProfileSidebar = () => {
                                 <p className="text-color-secondary m-0">Amet mimin mıollit</p>
                             </div>
                         </a>
-                    </li>
-                    <li>
+                    </li> */}
+                    {/* <li>
                         <a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
                             <span>
                                 <i className="pi pi-cog text-xl text-primary"></i>
@@ -51,7 +51,7 @@ const AppProfileSidebar = () => {
                                 <p className="text-color-secondary m-0">Exercitation veniam</p>
                             </div>
                         </a>
-                    </li>
+                    </li> */}
                     <li onClick={() => logout()}>
                         <a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
                             <span>
@@ -59,14 +59,14 @@ const AppProfileSidebar = () => {
                             </span>
                             <div className="ml-3">
                                 <span className="mb-2 font-semibold">Sign Out</span>
-                                <p className="text-color-secondary m-0">Sed ut perspiciatis</p>
+                                <p className="text-color-secondary m-0">Log out from your portal.</p>
                             </div>
                         </a>
                     </li>
                 </ul>
             </div>
 
-            <div className="flex flex-column mt-5 mx-auto md:mx-0">
+            {/* <div className="flex flex-column mt-5 mx-auto md:mx-0">
                 <span className="mb-2 font-semibold">Notifications</span>
                 <span className="text-color-secondary font-medium mb-5">You have 3 notifications</span>
 
@@ -149,7 +149,7 @@ const AppProfileSidebar = () => {
                         </a>
                     </li>
                 </ul>
-            </div>
+            </div> */}
         </Sidebar>
     );
 };

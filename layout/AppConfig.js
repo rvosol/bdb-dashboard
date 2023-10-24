@@ -104,7 +104,7 @@ const AppConfig = (props) => {
                     })}
                 </div>
 
-                <h5>Scale</h5>
+                {/* <h5>Scale</h5>
                 <div className="flex align-items-center">
                     <Button icon="pi pi-minus" type="button" onClick={decrementScale} className="p-button-text p-button-rounded w-2rem h-2rem mr-2" disabled={layoutConfig.scale === scales[0]}></Button>
                     <div className="flex gap-2 align-items-center">
@@ -197,7 +197,7 @@ const AppConfig = (props) => {
                         <h5>Ripple Effect</h5>
                         <InputSwitch checked={layoutConfig.ripple} onChange={(e) => changeRipple(e)}></InputSwitch>
                     </>
-                )}
+                )} */}
             </Sidebar>
         </>
     );

@@ -376,12 +376,12 @@ const AppMenu = () => {
                     icon: 'pi pi-fw pi-user',
                     items: [
                         {
-                            label: 'List',
+                            label: 'User',
                             icon: 'pi pi-fw pi-list',
                             to: '/admin/user-management'
                         },
                         {
-                            label: 'Positions',
+                            label: 'Position',
                             icon: 'pi pi-fw pi-list',
                             to: '/admin/position-management'
                         },
@@ -395,12 +395,12 @@ const AppMenu = () => {
                 
                
                 {
-                    label: 'Contacts',
+                    label: 'Contact Management',
                     icon: 'pi pi-fw pi-list',
                     to: '/admin/contact-management'
                 },
                 {
-                    label: 'Clients',
+                    label: 'Client Management',
                     icon: 'pi pi-fw pi-list',
                     to: '/admin/client-management'
                 },
