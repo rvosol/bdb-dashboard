@@ -18,6 +18,7 @@ import axiosInstance from '../../utils/axiosInstance';
 import { Dropdown } from 'primereact/dropdown';
 import { Formik, Field, ErrorMessage, Form } from 'formik';
 import * as Yup from 'yup';
+import withSuperAdminAuth from '../../HOC/withSuperAdminAuth';
 const Crud = () => {
     let emptyProduct = {
         employeeId: '',
@@ -30,6 +31,7 @@ const Crud = () => {
         mobile: '',
         department: '',
         position: '',
+        password: '',
     };
 
     const [products, setProducts] = useState(null);
@@ -98,6 +100,7 @@ const Crud = () => {
         setSubmitted(false);
         setProductDialog(false);
         formikRef.current.resetForm(); 
+        setFile(null)
     };
 
     const hideDeleteProductDialog = () => {
@@ -125,6 +128,7 @@ const Crud = () => {
             formData.append('employeeId', product.employeeId);
             formData.append('status', 'active');
             formData.append('role', 'admin');
+            formData.append('password', product.password);
             if (file) {
                 console.log(file, 'file file')
                 formData.append('photo', file);
@@ -168,7 +172,7 @@ const Crud = () => {
 
     const editProduct = (product) => {
         console.log(product)
-        setProduct({ ...product, department: product?.department?._id, position: product?.position?._id });
+        setProduct({ ...product, department: product?.department?._id, position: product?.position?._id, password: '' });
         setProductDialog(true);
     };
 
@@ -262,6 +266,14 @@ const Crud = () => {
             </>
         );
     };
+    const ratingBodyTemplate2 = (rowData) => {
+        return (
+            <>
+                <span className="p-column-title">Department</span>
+                {rowData?.department?.name}
+            </>
+        );
+    };
 
     const statusBodyTemplate = (rowData) => {
         return (
@@ -291,12 +303,7 @@ const Crud = () => {
         </div>
     );
 
-    const productDialogFooter = (
-        <>
-            <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" className="p-button-text" onClick={saveProduct} />
-        </>
-    );
+
     const deleteProductDialogFooter = (
         <>
             <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteProductDialog} />
@@ -310,12 +317,7 @@ const Crud = () => {
         </>
     );
 
-    const ProductDialogFooter = (
-        <>
-            <Button label="Close" icon="pi pi-times" className="p-button-text" onClick={hideDialog} />
-            <Button label="Save" icon="pi pi-check" className="p-button-text" type="submit" />
-        </>
-    );
+
 
     const [passwordEmailSending,setPasswordEmailSending] = useState(false)
     const handlePasswordReset = (userData) => {
@@ -331,6 +333,8 @@ const Crud = () => {
               setPasswordEmailSending(false);
           });
     };
+
+    console.log(file, product._id, product.photo, 'deeeeeeeee')
     return (
         <div className="grid crud-demo">
             <div className="col-12">
@@ -364,16 +368,19 @@ const Crud = () => {
                         }}
                         first={(page - 1) * limit}
                     >
-                        <Column header="User ID" field='employeeId'></Column>
+                        {/* <Column header="User ID" field='employeeId'></Column> */}
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '4rem' }}></Column> */}
                         {/* <Column field="code" header="Code" sortable body={codeBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column> */}
-                        <Column field="firstName" header="First Name" body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
-                        <Column header="Image" body={imageBodyTemplate}></Column>
+                        <Column field="firstName" header="First Name"></Column>
+                        <Column field="lastName" header="Last Name"></Column>
+                        {/* <Column header="Image" body={imageBodyTemplate}></Column> */}
                         <Column field="email" header="Email" body={priceBodyTemplate} ></Column>
-                        <Column field="mobile" header="Mobile" body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="mobile" header="Mobile Number" ></Column>
+                        <Column field="phone" header="Phone Number" ></Column>
                         <Column field="position" header="Position" body={ratingBodyTemplate} ></Column>
-                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
-                        <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="department" header="Department" body={ratingBodyTemplate2} ></Column>
+                        {/* <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column> */}
+                        <Column header="Action" body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
 
 
@@ -555,6 +562,27 @@ const Crud = () => {
                                                 <small className="p-invalid">{formik.errors.email}</small> : null}
                                         </div>
 
+                                     
+
+
+
+                                        <div className="field">
+                                            <label htmlFor="password">Password</label>
+                                            <Field
+                                                as={InputText}
+                                                id="password"
+                                                name="password"
+                                                className={classNames({ 'p-invalid': formik.errors.password && formik.touched.password })}
+                                                onChange={(e) => {
+                                                    formik.handleChange(e);
+                                                    onInputChange(e, 'password');
+                                                }}
+                                                type="password"
+                                            />
+                                            {formik.errors.password && formik.touched.password ?
+                                                <small className="p-invalid">{formik.errors.password}</small> : null}
+                                        </div>
+
                                         <div className="field">
                                             <label htmlFor="phone">Phone</label>
                                             <Field
@@ -690,4 +718,4 @@ const Crud = () => {
     );
 };
 
-export default Crud;
+export default withSuperAdminAuth(Crud) ;

@@ -1,9 +1,9 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useRef } from 'react';
 
 import axiosInstance from '../../utils/axiosInstance';
-import { toast } from 'react-toastify';
+// import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
-
+import { Toast } from 'primereact/toast';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -11,6 +11,8 @@ export const AuthProvider = ({ children }) => {
     const [isAuth, setIsAuth] = useState(false);
     const [loginLoad, setLoginLoad] = useState(false);
     const router = useRouter()
+    const [loading, setLoading] = useState(true);
+    const toast = useRef();
     const fetchProfile = async () => {
         try {
             const response = await axiosInstance.get('/admin/profile');
@@ -23,10 +25,12 @@ export const AuthProvider = ({ children }) => {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            fetchProfile()
-            // Fetch user profile here
+            fetchProfile().finally(() => setLoading(false));
+        } else {
+            setLoading(false);
         }
     }, []);
+    
 
     const login = async (credentials) => {
         setLoginLoad(true)
@@ -37,7 +41,8 @@ export const AuthProvider = ({ children }) => {
             setLoginLoad(false)
         } catch (error) {
             console.log('Failed to login', error?.response?.data?.error);
-            toast.error(error?.response?.data?.error);
+            // toast.error(error?.response?.data?.error);
+            toast.current.show({ severity: 'error', summary: 'Error Message', detail: error?.response?.data?.error, life: 3000 });
             setLoginLoad(false)
         }
     };
@@ -49,12 +54,14 @@ export const AuthProvider = ({ children }) => {
             // Fetch user profile here
             // router.push(`/`)
             localStorage.setItem('token', response?.data?.data?.token)
+            setLoading(true)
             fetchProfile()
             setLoginLoad(false)
             router.push(`/`)
         } catch (error) {
             console.log('Failed to login', error?.response?.data?.message);
-            toast.error(error?.response?.data?.message);
+            // toast.error(error?.response?.data?.message);
+            toast.current.show({ severity: 'error', summary: 'Error Message', detail: error?.response?.data?.message, life: 3000 });
             setLoginLoad(false)
         }
     };
@@ -67,7 +74,8 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ userInfo, isAuth, login, logout, loginLoad, loginVerification }}>
+        <AuthContext.Provider value={{ userInfo, isAuth, login, logout, loginLoad, loginVerification, loading }}>
+                 <Toast ref={toast} />
             {children}
         </AuthContext.Provider>
     );

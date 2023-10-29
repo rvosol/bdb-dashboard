@@ -119,4 +119,4 @@ Login.getLayout = function getLayout(page) {
     );
 };
 
-export default Login ;
+export default Login;

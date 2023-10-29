@@ -82,12 +82,12 @@ const AppConfig = (props) => {
 
     return (
         <>
-            <button className="layout-config-button p-link" type="button" onClick={onConfigButtonClick}>
+            {/* <button className="layout-config-button p-link" type="button" onClick={onConfigButtonClick}>
                 <i className="pi pi-cog"></i>
-            </button>
+            </button> */}
 
             <Sidebar visible={layoutState.configSidebarVisible} onHide={onConfigSidebarHide} position="right" className="layout-config-sidebar w-18rem">
-                <h5>Themes</h5>
+                {/* <h5>Themes</h5>
                 <div className="flex flex-wrap row-gap-3">
                     {componentThemes.map((theme, i) => {
                         return (
@@ -102,9 +102,9 @@ const AppConfig = (props) => {
                             </div>
                         );
                     })}
-                </div>
+                </div> */}
 
-                {/* <h5>Scale</h5>
+               {/* <h5>Scale</h5>
                 <div className="flex align-items-center">
                     <Button icon="pi pi-minus" type="button" onClick={decrementScale} className="p-button-text p-button-rounded w-2rem h-2rem mr-2" disabled={layoutConfig.scale === scales[0]}></Button>
                     <div className="flex gap-2 align-items-center">
@@ -113,9 +113,9 @@ const AppConfig = (props) => {
                         })}
                     </div>
                     <Button icon="pi pi-plus" type="button" onClick={incrementScale} className="p-button-text p-button-rounded w-2rem h-2rem ml-2" disabled={layoutConfig.scale === scales[scales.length - 1]}></Button>
-                </div>
-
-                {!props.minimal && (
+                </div> */}
+ 
+                {/* {!props.minimal && (
                     <>
                         <h5>Menu Type</h5>
                         <div class="flex flex-wrap row-gap-3">
@@ -165,6 +165,7 @@ const AppConfig = (props) => {
                         </div>
                     </>
                 )}
+                 */}
 
                 <h5>Color Scheme</h5>
                 <div className="field-radiobutton">
@@ -179,7 +180,7 @@ const AppConfig = (props) => {
                     <RadioButton name="colorScheme" value="dark" checked={layoutConfig.colorScheme === 'dark'} onChange={(e) => changeColorScheme(e.value)} inputId="mode-dark"></RadioButton>
                     <label htmlFor="mode-dark">Dark</label>
                 </div>
-
+{/* 
                 {!props.minimal && (
                     <>
                         <h5>Input Style</h5>

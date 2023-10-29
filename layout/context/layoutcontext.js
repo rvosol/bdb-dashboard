@@ -12,7 +12,7 @@ export const LayoutProvider = (props) => {
         menuTheme: "transparent",
         colorScheme: 'light',
         theme: 'blue',
-        scale: 14
+        scale: 12
     });
 
     console.log(layoutConfig)

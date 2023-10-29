@@ -17,6 +17,7 @@ import axiosInstance from '../../utils/axiosInstance';
 
 import { Formik, Field, ErrorMessage, Form } from 'formik';
 import * as Yup from 'yup';
+import withSuperAdminAuth from '../../HOC/withSuperAdminAuth';
 const Crud = () => {
     let emptyProduct = {
         contactId: '',
@@ -255,6 +256,15 @@ const Crud = () => {
         );
     };
 
+    const ratingBodyTemplate2 = (rowData) => {
+        return (
+            <>
+                <span className="p-column-title">Department</span>
+                {rowData?.department}
+            </>
+        );
+    };
+
     const statusBodyTemplate = (rowData) => {
         return (
             <>
@@ -344,16 +354,20 @@ const Crud = () => {
                         }}
                         first={(page - 1) * limit}
                     >
-                         <Column header="Contact ID" field='contactId'></Column>
+                         {/* <Column header="Contact ID" field='contactId'></Column> */}
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '4rem' }}></Column> */}
                         {/* <Column field="code" header="Code" sortable body={codeBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column> */}
-                        <Column field="firstName" header="First Name"  body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
-                        <Column header="Image" body={imageBodyTemplate}></Column>
+                        <Column field="firstName" header="First Name" ></Column>
+                        <Column field="lastName" header="Last Name" ></Column>
                         <Column field="email" header="Email" body={priceBodyTemplate} ></Column>
                         <Column field="mobile" header="Mobile"  body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+
+                        <Column field="mobile" header="Mobile Number" ></Column>
+                        <Column field="phone" header="Phone Number" ></Column>
                         <Column field="position" header="Position" body={ratingBodyTemplate} ></Column>
-                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate}  headerStyle={{ minWidth: '10rem' }}></Column>
-                        <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="department" header="Department" body={ratingBodyTemplate2} ></Column>
+                        
+                        <Column header='Action' body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
 
 
@@ -653,4 +667,4 @@ const Crud = () => {
     );
 };
 
-export default Crud;
+export default withSuperAdminAuth(Crud);

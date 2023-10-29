@@ -6,12 +6,12 @@ const AppMenu = () => {
             label: 'Dashboard',
             icon: 'pi pi-home',
             items: [
-                {
-                    label: 'Cases',
-                    icon: 'pi pi-fw pi-home',
-                    to: '/',
-                    notShowLabel: true
-                },
+                // {
+                //     label: 'Cases',
+                //     icon: 'pi pi-fw pi-home',
+                //     to: '/',
+                //     notShowLabel: true
+                // },
                 // {
                 //     label: 'Banking',
                 //     icon: 'pi pi-fw pi-image',
@@ -20,7 +20,7 @@ const AppMenu = () => {
                 {
                     label: 'Profile',
                     icon: 'pi pi-fw pi-image',
-                    to: '/dashboard-profile'
+                    to: '/'
                 }
             ]
         },
@@ -396,12 +396,12 @@ const AppMenu = () => {
                
                 {
                     label: 'Contact Management',
-                    icon: 'pi pi-fw pi-list',
+                    icon: 'pi pi-fw pi-id-card',
                     to: '/admin/contact-management'
                 },
                 {
                     label: 'Client Management',
-                    icon: 'pi pi-fw pi-list',
+                    icon: 'pi pi-fw pi-user-plus',
                     to: '/admin/client-management'
                 },
 

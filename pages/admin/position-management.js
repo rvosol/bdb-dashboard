@@ -17,6 +17,7 @@ import axiosInstance from '../../utils/axiosInstance';
 
 import { Formik, Field, ErrorMessage, Form } from 'formik';
 import * as Yup from 'yup';
+import withSuperAdminAuth from '../../HOC/withSuperAdminAuth';
 
 const Crud = () => {
     let emptyProduct = {
@@ -459,4 +460,4 @@ const Crud = () => {
     );
 };
 
-export default Crud;
+export default withSuperAdminAuth(Crud);

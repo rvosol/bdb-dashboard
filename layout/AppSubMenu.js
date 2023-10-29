@@ -46,10 +46,10 @@ const AppSubMenu = (props) => {
         <MenuProvider>
             <ul className="layout-menu">
                 {props.model.map((item, i) => {
-                    if(item.label === 'User Management' && userInfo?.role !== 'superAdmin'){
+                    if(item.label === 'Admin' && userInfo?.role !== 'superAdmin'){
                         return null
                     }
-                    console.log(item)
+                    console.log(item, 'asdfasdfasdfasdfasdfasdfasdf')
                     return !item.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
                 })}
             </ul>

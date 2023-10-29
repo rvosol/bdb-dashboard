@@ -18,6 +18,7 @@ import axiosInstance from '../../utils/axiosInstance';
 import { Formik, Field, ErrorMessage, Form } from 'formik';
 import * as Yup from 'yup';
 import { Dropdown } from 'primereact/dropdown';
+import withSuperAdminAuth from '../../HOC/withSuperAdminAuth';
 const Crud = () => {
     let emptyProduct = {
         clientId: '',
@@ -226,8 +227,8 @@ const Crud = () => {
     const priceBodyTemplate = (rowData) => {
         return (
             <>
-                <span className="p-column-title">barangay</span>
-                {rowData?.barangay}
+                <span className="p-column-title">Contact Name</span>
+                {rowData?.contact?.firstName + " " + rowData?.contact?.lastName}
             </>
         );
     };
@@ -235,8 +236,8 @@ const Crud = () => {
     const categoryBodyTemplate = (rowData) => {
         return (
             <>
-                <span className="p-column-title">province</span>
-                {rowData.province}
+                <span className="p-column-title">Email</span>
+                {rowData.contact?.email}
             </>
         );
     };
@@ -244,8 +245,17 @@ const Crud = () => {
     const ratingBodyTemplate = (rowData) => {
         return (
             <>
-                <span className="p-column-title">city</span>
-                {rowData?.city}
+                <span className="p-column-title">Mobile Number</span>
+                {rowData?.contact?.mobile}
+            </>
+        );
+    };
+
+    const ratingBodyTemplate2 = (rowData) => {
+        return (
+            <>
+                <span className="p-column-title">Phone Number</span>
+                {rowData?.contact?.phone}
             </>
         );
     };
@@ -340,16 +350,15 @@ const Crud = () => {
                         first={(page - 1) * limit}
                     >
 
-                        <Column field="clientId" header="Client ID" headerStyle={{ minWidth: '15rem' }}></Column>
-                        <Column field="name" header="name"  body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
-                        {/* <Column header="Image" body={imageBodyTemplate}></Column> */}
-                        <Column field="barangay" header="Country Code" body={priceBodyTemplate} ></Column>
-                        <Column field="province" header="Province"  body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
-                        <Column field="city" header="City" body={ratingBodyTemplate} ></Column>
-                        <Column field="zipCode" header="ZipCode" ></Column>
-                        <Column field="address" header="Address" body={ratingBodyTemplate} ></Column>
-                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate}  headerStyle={{ minWidth: '10rem' }}></Column>
-                        <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                        {/* <Column field="clientId" header="Client ID" headerStyle={{ minWidth: '15rem' }}></Column> */}
+                        <Column field="name" header="name"  ></Column>
+                        <Column field="contactName" header="Contact Name" body={priceBodyTemplate} ></Column>
+                        <Column field="email" header="Email"  body={categoryBodyTemplate} ></Column>
+                        <Column field="mobileNumber" header="Mobile Number" body={ratingBodyTemplate} ></Column>
+
+                        <Column field="phoneNumber" header="Phone Number" body={ratingBodyTemplate2} ></Column>
+                        {/* <Column field="inventoryStatus" header="Status" body={statusBodyTemplate}  headerStyle={{ minWidth: '10rem' }}></Column> */}
+                        <Column header="Action" body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
 
 
@@ -603,4 +612,4 @@ const Crud = () => {
     );
 };
 
-export default Crud;
+export default withSuperAdminAuth(Crud) ;

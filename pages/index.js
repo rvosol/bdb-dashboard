@@ -1,83 +1,118 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { Chart } from 'primereact/chart';
 import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
-import { Dropdown } from 'primereact/dropdown';
-import { InputText } from 'primereact/inputtext';
-import { Rating } from 'primereact/rating';
-import { ProductService } from '../demo/service/ProductService';
+import { InputNumber } from 'primereact/inputnumber';
+import { Tag } from 'primereact/tag';
 import { LayoutContext } from '../layout/context/layoutcontext';
-import { Tooltip } from 'primereact/tooltip';
+import { ProductService } from '../demo/service/ProductService';
 import withAuth from '../HOC/withAuth';
 
-const ECommerce = () => {
-    const [products, setProducts] = useState([]);
+const Banking = () => {
     const [chartOptions, setChartOptions] = useState({});
-    const [weeks] = useState([
-        {
-            label: 'Last Week',
-            value: 0,
-            data: [
-                [65, 59, 80, 81, 56, 55, 40],
-                [28, 48, 40, 19, 86, 27, 90]
-            ]
-        },
-        {
-            label: 'This Week',
-            value: 1,
-            data: [
-                [35, 19, 40, 61, 16, 55, 30],
-                [48, 78, 10, 29, 76, 77, 10]
-            ]
-        }
-    ]);
     const [chartData, setChartData] = useState({});
-    const [selectedWeek, setSelectedWeek] = useState(0);
-    const [filters, setFilters] = useState(null);
-    const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [price, setPrice] = useState(0);
+    const [products, setProducts] = useState([]);
     const { layoutConfig } = useContext(LayoutContext);
     const dt = useRef(null);
-
-    const exportCSV = () => {
-        dt.current.exportCSV();
-    };
-
+    console.log(products, 'products')
+    const payments = [
+        { name: 'ABC Company', amount: 750.6, paid: true, date: '06/04/2022' },
+        { name: 'Jane Doe', amount: 450.5, paid: true, date: '07/04/2022' },
+        { name: 'Tom Brown', amount: 450.2, paid: false, date: '12/04/2022' },
+        { name: 'Sally Field', amount: 250.9, paid: true, date: '17/04/2022' },
+        { name: 'Nancy Wilson', amount: 400.9, paid: false, date: '20/04/2022' }
+    ];
+    useEffect(() => {
+        ProductService.getProductsSmall().then((data) => setProducts(data));
+     
+    }, []);
     const formatCurrency = (value) => {
         return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
     };
 
-    const onWeekChange = (e) => {
-        let newBarData = { ...chartData.barData };
-        newBarData.datasets[0].data[0] = weeks[e.value].data[0];
-        newBarData.datasets[1].data[1] = weeks[e.value].data[1];
-        setSelectedWeek(e.value);
-        setChartData((prevState) => ({ ...prevState, barData: newBarData }));
-    };
-    const onGlobalFilterChange = (e) => {
-        const value = e.target.value;
-        let _filters = { ...filters };
-        _filters['global'].value = value;
+    const initChart = () => {
+        const documentStyle = getComputedStyle(document.documentElement);
+        const textColor = documentStyle.getPropertyValue('--text-color');
+        const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
+        const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
-        setFilters(_filters);
-        setGlobalFilterValue(value);
+        const data = {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [
+                {
+                    label: 'Won',
+                    data: [6500, 5900, 8000, 8100, 5600, 5500, 4000],
+                    fill: false,
+                    tension: 0.4,
+                    borderColor: documentStyle.getPropertyValue('--green-500')
+                },
+                {
+                    label: 'Lost',
+                    data: [1200, 5100, 6200, 3300, 2100, 6200, 4500],
+                    fill: true,
+                    borderColor: '#6366f1',
+                    tension: 0.4,
+                    backgroundColor: 'rgba(99,102,220,0.2)'
+                }
+            ]
+        };
+
+        const options = {
+            animation: {
+                duration: 0
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: textColor
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function (context) {
+                            let label = context.dataset.label || '';
+
+                            if (label) {
+                                label += ': ';
+                            }
+
+                            if (context.parsed.y !== null) {
+                                label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                },
+                y: {
+                    ticks: {
+                        color: textColorSecondary
+                    },
+                    grid: {
+                        color: surfaceBorder
+                    }
+                }
+            }
+        };
+
+        setChartData(data);
+        setChartOptions(options);
     };
 
-    const initFilters = () => {
-        setFilters({
-            global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-            name: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-            'country.name': { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-            representative: { value: null, matchMode: FilterMatchMode.IN },
-            date: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
-            balance: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-            status: { operator: FilterOperator.OR, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
-            activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
-            verified: { value: null, matchMode: FilterMatchMode.EQUALS }
-        });
-        setGlobalFilterValue('');
-    };
+    useEffect(() => {
+        initChart();
+    }, [layoutConfig]);
 
     const nameBodyTemplate = (rowData) => {
         return (
@@ -88,309 +123,230 @@ const ECommerce = () => {
         );
     };
 
-    const priceBodyTemplate = (rowData) => {
+    const amountBodyTemplate = (rowData) => {
         return (
             <>
                 <span className="p-column-title">Price</span>
-                {formatCurrency(rowData.price)}
+                {formatCurrency(rowData.amount)}
             </>
         );
     };
 
-    const categoryBodyTemplate = (rowData) => {
+    const dateBodyTemplate = (rowData) => {
         return (
             <>
                 <span className="p-column-title">Category</span>
-                {rowData.category}
+                {rowData.date}
             </>
         );
     };
 
     const statusBodyTemplate = (rowData) => {
-        const badgeClass = rowData.inventoryStatus.toLowerCase();
-        return (
-            <>
-                <span className="p-column-title">Status</span>
-                <span className={'product-badge status-' + badgeClass}>{rowData.inventoryStatus}</span>
-            </>
-        );
+        return <>{rowData.paid ? <Tag value="COMPLETED" severity="success"></Tag> : <Tag value="PENDING" severity="warning"></Tag>}</>;
     };
-
-    const searchBodyTemplate = () => {
-        return (
-            <>
-                <Button type="button" icon="pi pi-search" className="p-button-outlined p-button-rounded"></Button>
-            </>
-        );
-    };
-
-    useEffect(() => {
-        ProductService.getProductsSmall().then((data) => setProducts(data));
-        const documentStyle = getComputedStyle(document.documentElement);
-        const textColor = documentStyle.getPropertyValue('--text-color');
-        const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
-        const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
-        const pieData = {
-            labels: ['Private', 'Company', 'Others'],
-            datasets: [
-                {
-                    data: [300, 50, 100],
-                    backgroundColor: [documentStyle.getPropertyValue('--primary-700'), documentStyle.getPropertyValue('--primary-400'), documentStyle.getPropertyValue('--primary-100')],
-                    hoverBackgroundColor: [documentStyle.getPropertyValue('--primary-600'), documentStyle.getPropertyValue('--primary-300'), documentStyle.getPropertyValue('--primary-200')]
-                }
-            ]
-        };
-
-        const pieOptions = {
-            animation: {
-                duration: 0
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    labels: {
-                        color: textColor,
-                        usePointStyle: true,
-                        font: {
-                            weight: 700
-                        },
-                        padding: 28
-                    },
-                    position: 'bottom'
-                }
-            }
-        };
-
-        const barData = {
-            labels: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL'],
-            datasets: [
-                {
-                    label: 'Won',
-                    backgroundColor: documentStyle.getPropertyValue('--primary-500'),
-                    barThickness: 12,
-                    borderRadius: 12,
-                    data: weeks[selectedWeek].data[0]
-                },
-                {
-                    label: 'Lost',
-                    backgroundColor: documentStyle.getPropertyValue('--primary-200'),
-                    barThickness: 12,
-                    borderRadius: 12,
-                    data: weeks[selectedWeek].data[1]
-                }
-            ]
-        };
-
-        const barOptions = {
-            animation: {
-                duration: 0
-            },
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    labels: {
-                        color: textColor,
-                        usePointStyle: true,
-                        font: {
-                            weight: 700
-                        },
-                        padding: 28
-                    },
-                    position: 'bottom'
-                }
-            },
-            scales: {
-                x: {
-                    ticks: {
-                        color: textColorSecondary,
-                        font: {
-                            weight: 500
-                        }
-                    },
-                    grid: {
-                        display: false,
-                        drawBorder: false
-                    }
-                },
-                y: {
-                    ticks: {
-                        color: textColorSecondary
-                    },
-                    grid: {
-                        color: surfaceBorder,
-                        drawBorder: false
-                    }
-                }
-            }
-        };
-        setChartOptions({
-            barOptions,
-            pieOptions
-        });
-        setChartData({
-            barData,
-            pieData
-        });
-        initFilters();
-    }, [weeks, selectedWeek, layoutConfig]);
 
     return (
         <div className="grid">
-            <div className="col-12 md:col-6 xl:col-3">
-                <div className="card h-full">
-                    <span className="font-semibold text-lg">Cases</span>
-                    <div className="flex justify-content-between align-items-start mt-3">
-                        <div className="w-6">
-                            <span className="text-4xl font-bold text-900">120</span>
-                            <div className="text-green-500">
-                                <span className="font-medium">+12%</span>
-                                <i className="pi pi-arrow-up text-xs ml-2"></i>
-                            </div>
+            <div className="col-12">
+                <div className="flex flex-column sm:flex-row align-items-center gap-4">
+                    <div className="flex flex-column sm:flex-row align-items-center gap-3">
+                        <img alt="avatar" src={`/BDB-Profile.jpg`} className="border-radius-100 w-4rem h-4rem flex-shrink-0" />
+                        <div className="flex flex-column align-items-center sm:align-items-start">
+                            <span className="text-900 font-bold text-4xl">Welcome, Jane</span>
+                            <p className="text-600 m-0">Your last login was on 04/05/2022 at 10:24 AM</p>
                         </div>
-                        <div className="w-6">
-                            <svg width="100%" viewBox="0 0 258 96" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M1 93.9506L4.5641 94.3162C8.12821 94.6817 15.2564 95.4128 22.3846 89.6451C29.5128 83.8774 36.641 71.6109 43.7692 64.4063C50.8974 57.2018 58.0256 55.0592 65.1538 58.9268C72.2821 62.7945 79.4103 72.6725 86.5385 73.5441C93.6667 74.4157 100.795 66.2809 107.923 65.9287C115.051 65.5765 122.179 73.0068 129.308 66.8232C136.436 60.6396 143.564 40.8422 150.692 27.9257C157.821 15.0093 164.949 8.97393 172.077 6.43766C179.205 3.9014 186.333 4.86425 193.462 12.0629C200.59 19.2616 207.718 32.696 214.846 31.0487C221.974 29.4014 229.103 12.6723 236.231 5.64525C243.359 -1.38178 250.487 1.29325 254.051 2.63076L257.615 3.96827"
-                                    style={{ strokeWidth: '2px', stroke: 'var(--primary-color)' }}
-                                    stroke="10"
-                                />
-                            </svg>
-                        </div>
+                    </div>
+                    <div className="flex gap-2 sm:ml-auto">
+                        <Button type="button" tooltip="Exchange" tooltipOptions={{ position: 'bottom' }} icon="pi pi-arrows-h" className="p-button-rounded p-button-outlined"></Button>
+                        <Button type="button" tooltip="Withdraw" tooltipOptions={{ position: 'bottom' }} icon="pi pi-download" className="p-button-rounded p-button-outlined"></Button>
+                        <Button type="button" tooltip="Send" tooltipOptions={{ position: 'bottom' }} icon="pi pi-send" className="p-button-rounded"></Button>
                     </div>
                 </div>
             </div>
-            <div className="col-12 md:col-6 xl:col-3">
-                <div className="card h-full">
-                    <span className="font-semibold text-lg">Won</span>
-                    <div className="flex justify-content-between align-items-start mt-3">
-                        <div className="w-6">
-                            <span className="text-4xl font-bold text-900">45</span>
-                            <div className="text-green-500">
-                                <span className="font-medium">+20%</span>
-                                <i className="pi pi-arrow-up text-xs ml-2"></i>
-                            </div>
-                        </div>
-                        <div className="w-6">
-                            <svg width="100%" viewBox="0 0 115 41" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M1 35.6498L2.24444 32.4319C3.48889 29.214 5.97778 22.7782 8.46667 20.3627C10.9556 17.9473 13.4444 19.5522 15.9333 21.7663C18.4222 23.9803 20.9111 26.8035 23.4 30.6606C25.8889 34.5176 28.3778 39.4085 30.8667 37.2137C33.3556 35.0189 35.8444 25.7383 38.3333 26.3765C40.8222 27.0146 43.3111 37.5714 45.8 38.9013C48.2889 40.2311 50.7778 32.3341 53.2667 31.692C55.7556 31.0499 58.2444 37.6628 60.7333 39.4617C63.2222 41.2607 65.7111 38.2458 68.2 34.9205C70.6889 31.5953 73.1778 27.9597 75.6667 23.5955C78.1556 19.2313 80.6444 14.1385 83.1333 13.8875C85.6222 13.6365 88.1111 18.2272 90.6 20.2425C93.0889 22.2578 95.5778 21.6977 98.0667 18.8159C100.556 15.9341 103.044 10.7306 105.533 7.37432C108.022 4.01806 110.511 2.50903 111.756 1.75451L113 1"
-                                    style={{ strokeWidth: '1px', stroke: 'var(--primary-color)' }}
-                                />
-                            </svg>
-                        </div>
+            <div className="col-12 md:col-6 xl:col-4">
+                <div className="card h-full relative overflow-hidden">
+                    <svg id="visual" viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" version="1.1" className="absolute left-0 top-0 h-full w-full z-1" preserveAspectRatio="none">
+                        <rect x="0" y="0" width="900" height="600" fill="var(--primary-600)"></rect>
+                        <path
+                            d="M0 400L30 386.5C60 373 120 346 180 334.8C240 323.7 300 328.3 360 345.2C420 362 480 391 540 392C600 393 660 366 720 355.2C780 344.3 840 349.7 870 352.3L900 355L900 601L870 601C840 601 780 601 720 601C660 601 600 601 540 601C480 601 420 601 360 601C300 601 240 601 180 601C120 601 60 601 30 601L0 601Z"
+                            fill="var(--primary-500)"
+                            strokeLinecap="round"
+                            strokeLinejoin="miter"
+                        ></path>
+                    </svg>
+                    <div className="z-2 relative text-white">
+                        <div className="text-xl font-semibold mb-3">Clients</div>
+                        <div className="mb-1 font-semibold">Won</div>
+                        <div className="text-2xl mb-5 font-bold">200</div>
+                        {/* <div className="flex align-items-center justify-content-between">
+                            <span className="text-lg">**** **** **** 1412</span>
+                            <span className="font-medium text-lg">12/26</span>
+                        </div> */}
                     </div>
                 </div>
             </div>
-            <div className="col-12 md:col-6 xl:col-3">
+            <div className="col-12 md:col-6 xl:col-4">
                 <div className="card h-full">
-                    <span className="font-semibold text-lg">Lost</span>
-                    <div className="flex justify-content-between align-items-start mt-3">
-                        <div className="w-6">
-                            <span className="text-4xl font-bold text-900">36</span>
-                            <div className="text-pink-500">
-                                <span className="font-medium">+24%</span>
-                                <i className="pi pi-arrow-down text-xs ml-2"></i>
-                            </div>
-                        </div>
-                        <div className="w-6">
-                            <svg width="100%" viewBox="0 0 115 41" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M1.5 1L2.74444 2.61495C3.98889 4.2299 6.47778 7.4598 8.96667 9.07151C11.4556 10.6832 13.9444 10.6767 16.4333 11.6127C18.9222 12.5487 21.4111 14.4271 23.9 16.6724C26.3889 18.9178 28.8778 21.5301 31.3667 20.1977C33.8556 18.8652 36.3444 13.5878 38.8333 11.3638C41.3222 9.13969 43.8111 9.96891 46.3 11.9894C48.7889 14.0099 51.2778 17.2217 53.7667 16.2045C56.2556 15.1873 58.7444 9.9412 61.2333 11.2783C63.7222 12.6155 66.2111 20.5359 68.7 21.4684C71.1889 22.401 73.6778 16.3458 76.1667 16.0009C78.6556 15.6561 81.1444 21.0217 83.6333 24.2684C86.1222 27.515 88.6111 28.6428 91.1 27.4369C93.5889 26.2311 96.0778 22.6916 98.5667 22.7117C101.056 22.7317 103.544 26.3112 106.033 29.7859C108.522 33.2605 111.011 36.6302 112.256 38.3151L113.5 40"
-                                    style={{ strokeWidth: '1px', stroke: 'var(--pink-500)' }}
-                                />
-                            </svg>
-                        </div>
+                    <div className="flex align-items-center justify-content-between mb-3">
+                        <div className="text-900 text-xl font-semibold">Clients</div>
+                        {/* <img alt="avatar" src={`/demo/images/banking/visa.svg`} className="h-1rem" /> */}
                     </div>
+                    <div className="text-600 mb-1 font-semibold">Lost</div>
+                    <div className="text-900 text-2xl text-primary mb-5 font-bold">10</div>
+                    {/* <div className="flex align-items-center justify-content-between">
+                        <span className="text-900 text-lg">**** **** **** 1231</span>
+                        <span className="text-600 font-medium text-lg">12/24</span>
+                    </div> */}
                 </div>
             </div>
-            <div className="col-12 md:col-6 xl:col-3">
-                <div className="card h-full">
-                    <span className="font-semibold text-lg">Active Clients</span>
-                    <div className="flex justify-content-between align-items-start mt-3">
-                        <div className="w-6">
-                            <span className="text-4xl font-bold text-900">164</span>
-                            <div className="text-green-500">
-                                <span className="font-medium">+30%</span>
-                                <i className="pi pi-arrow-up text-xs ml-2"></i>
-                            </div>
-                        </div>
-                        <div className="w-6">
-                            <svg width="100%" viewBox="0 0 103 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M0.5 22.7464L2 23C3.40972 23.1524 5.42201 18.0581 8.95833 16.9517C12 16 14.5972 23.4341 17.4167 20.4309C20.2361 17.4277 19 9.50002 25.5 9.50002C31 9.50002 30 4.00002 33 4.00002C35.8428 4.00002 40 13 42.7917 11.0655C47.3252 7.92391 48.4306 14.016 51.25 11.4384C54.0694 8.86075 56.5 12.5 59.7083 8.22399C63.3559 3.36252 65.4888 0.499985 68.5 0.499985C73 0.499985 73.5 7.00001 78.5 6.5C84.9677 5.85322 82.2931 2.58281 85 1.50002C87.5 0.500003 90.7222 11.8656 93.5417 8.93639C97.5 4.00002 99.1806 7.12226 100.59 7.6798L102 8.23734"
-                                    stroke="#6366F1"
-                                />
-                            </svg>
-                        </div>
-                    </div>
+            <div className="col-12 md:col-6 xl:col-2">
+                <div className="card h-full flex flex-column align-items-center justify-content-center">
+                <i className="pi pi-plus text-primary text-4xl mb-4"></i>
+                    <span className="text-900 text-lg mb-4 font-medium">Won</span>
+                    <span className="text-900 text-2xl text-primary font-bold">$24,345.21</span>
+                </div>
+            </div>
+            <div className="col-12 md:col-6 xl:col-2">
+                <div className="card h-full flex flex-column align-items-center justify-content-center">
+                    <i className="pi pi-minus text-primary text-4xl mb-4"></i>
+                    <span className="text-900 text-lg mb-4 font-medium">Lost</span>
+                    <span className="text-900 text-2xl text-primary font-bold"> ($10,416.11) </span>
                 </div>
             </div>
 
-            <div className="col-12 xl:col-9">
-                <div className="card h-auto">
-                    <div className="flex align-items-start justify-content-between mb-6">
-                        <span className="text-900 text-xl font-semibold">Case Overview</span>
-                        <Dropdown options={weeks} value={selectedWeek} className="w-10rem" optionLabel="label" onChange={onWeekChange}></Dropdown>
-                    </div>
-                    <Chart height="300px" type="bar" data={chartData.barData} options={chartOptions.barOptions}></Chart>
-                </div>
-            </div>
-            <div className="col-12 xl:col-3">
-                <div className="card h-auto">
-                    <div className="text-900 text-xl font-semibold mb-6">Cases by Category</div>
-                    <Chart height="300px" type="pie" data={chartData.pieData} options={chartOptions.pieOptions}></Chart>
-                </div>
-            </div>
-
-            <div className="col-12 lg:col-8">
+            <div className="col-12 xl:col-4">
                 <div className="card">
-                    <div className="flex flex-column md:flex-row md:align-items-start md:justify-content-between mb-3">
-                        <div className="text-900 text-xl font-semibold mb-3 md:mb-0">Recent Cases</div>
-                        <div className="inline-flex align-items-center">
-                            <span className="p-input-icon-left flex-auto">
-                                <i className="pi pi-search"></i>
-                                <InputText type={'text'} value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Search" style={{ borderRadius: '2rem' }} className="w-full" />
-                            </span>
-                            <Tooltip target=".export-target-button" />
-                            <Button icon="pi pi-upload" className="p-button-rounded mx-3 export-target-button" data-pr-tooltip="Export" onClick={exportCSV}></Button>
-                        </div>
-                    </div>
-                    <DataTable ref={dt} value={products} dataKey="id" paginator rows={6} className="datatable-responsive" globalFilter={globalFilterValue} emptyMessage="No products found." responsiveLayout="scroll">
-                        <Column field="name" header="Name" sortable body={nameBodyTemplate} headerStyle={{ minWidth: '12rem' }}></Column>
-                        <Column field="category" header="Category" sortable body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
-                        <Column field="cost" header="Cost" body={priceBodyTemplate} sortable headerStyle={{ minWidth: '10rem' }}></Column>
-                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} sortable headerStyle={{ minWidth: '10rem' }}></Column>
-                        <Column body={searchBodyTemplate} style={{ textAlign: 'center' }}></Column>
-                    </DataTable>
+                    <div className="text-900 text-xl font-semibold mb-3">Recent Cases</div>
+                    <ul className="list-none p-0 m-0">
+
+
+                        {products?.map(product => {
+                            return (
+                                <li className="flex align-items-center p-3 mb-3 border-bottom-1 surface-border">
+                                <img alt="brands" src={`/demo/images/product/${product.image}`} className="w-3rem flex-shrink-0 mr-3" />
+
+                                {/* <img src={`/demo/images/product/${product.image}`} alt={product.name} width="75" className="shadow-2 flex-shrink-0" /> */}
+                                <div className="flex flex-column">
+                                    <span className="text-xl font-medium text-900 mb-1">{product.name}</span>
+                                    {/* <span>05/23/2022</span> */}
+                                </div>
+                                <span className="text-xl text-900 ml-auto font-semibold">${product.price}</span>
+                            </li>
+                            )
+                        })}
+                       
+
+
+                        {/* <li className="flex align-items-center p-3 mb-3 border-bottom-1 surface-border">
+                            <img alt="brands" src={`/demo/images/banking/amazon.png`} className="w-3rem flex-shrink-0 mr-3" />
+                            <div className="flex flex-column">
+                                <span className="text-xl font-medium text-900 mb-1">Amazon</span>
+                                <span>04/12/2022</span>
+                            </div>
+                            <span className="text-xl text-900 ml-auto font-semibold">$50.00</span>
+                        </li>
+                        <li className="flex align-items-center p-3 mb-3 border-bottom-1 surface-border">
+                            <img alt="brands" src={`/demo/images/banking/nike.svg`} className="w-3rem flex-shrink-0 mr-3 border-circle" />
+                            <div className="flex flex-column">
+                                <span className="text-xl font-medium text-900 mb-1">Nike Store</span>
+                                <span>04/29/2022</span>
+                            </div>
+                            <span className="text-xl text-900 ml-auto font-semibold">$60.00</span>
+                        </li>
+                        <li className="flex align-items-center p-3 mb-3 border-bottom-1 surface-border">
+                            <img alt="brands" src={`/demo/images/banking/starbucks.svg`} className="w-3rem flex-shrink-0 mr-3" />
+                            <div className="flex flex-column">
+                                <span className="text-xl font-medium text-900 mb-1">Starbucks</span>
+                                <span>04/15/2022</span>
+                            </div>
+                            <span className="text-xl text-900 ml-auto font-semibold">$15.24</span>
+                        </li>
+                        <li className="flex align-items-center p-3 mb-3">
+                            <img alt="brands" src={`/demo/images/banking/amazon.png`} className="w-3rem flex-shrink-0 mr-3" />
+                            <div className="flex flex-column">
+                                <span className="text-xl font-medium text-900 mb-1">Amazon</span>
+                                <span>04/12/2022</span>
+                            </div>
+                            <span className="text-xl text-900 ml-auto font-semibold">$12.50</span>
+                        </li> */}
+                    </ul>
                 </div>
             </div>
-            <div className="col-12 lg:col-4">
+            <div className="col-12 xl:col-8">
+                <div className="card">
+                    <div className="text-900 text-xl font-semibold mb-3">Overview</div>
+                    <Chart type="line" data={chartData} options={chartOptions}></Chart>
+                </div>
+            </div>
+
+            <div className="col-12 lg:col-6">
                 <div className="card h-full">
-                    <div className="text-900 text-xl font-semibold mb-3">Top Cases</div>
-                    <ul className="list-none p-0 m-0">
-                        {products.slice(0, 6).map((product, i) => {
-                            return (
-                                <li key={i} className="flex align-items-center justify-content-between p-3">
-                                    <div className="inline-flex align-items-center">
-                                        <img src={`/demo/images/product/${product.image}`} alt={product.name} width="75" className="shadow-2 flex-shrink-0" />
-                                        <div className="flex flex-column ml-3">
-                                            <span className="font-medium text-lg mb-1">{product.name}</span>
-                                            <Rating value={product.rating} readOnly cancel={false} onIconProps={{ style: { fontSize: '12px' } }} offIconProps={{ style: { fontSize: '12px' } }}></Rating>
-                                        </div>
-                                    </div>
-                                    <span className="ml-auto font-semibold text-xl p-text-secondary">${product.price}</span>
-                                </li>
-                            );
-                        })}
-                    </ul>
+                    <div className="flex align-items-center justify-content-between mb-3">
+                        <div className="text-900 text-xl font-semibold">Recent Clients</div>
+                        <Button type="button" icon="pi pi-plus" label="Add New" className="p-button-outlined p-button-sm"></Button>
+                    </div>
+                    <div className="flex flex-column row-gap-3">
+                        <div className="flex flex-column lg:flex-row gap-3">
+                            <div className="w-full lg:w-6 p-3 border-1 border-round surface-border flex align-items-center hover:surface-100 cursor-pointer border-radius">
+                                <img alt="avatar" src={`/BDB-Profile.jpg`} className="w-2rem flex-shrink-0 mr-2" />
+                                <span className="text-900 text-lg font-medium">Jane Doe</span>
+                            </div>
+                            <div className="w-full lg:w-6 p-3 border-1 border-round surface-border flex align-items-center hover:surface-100 cursor-pointer border-radius">
+                                <img alt="avatar" src={`/demo/images/avatar/circle/avatar-f-2.png`} className="w-2rem flex-shrink-0 mr-2" />
+                                <span className="text-900 text-lg font-medium">John Smith</span>
+                            </div>
+                        </div>
+                        <div className="flex flex-column lg:flex-row gap-3">
+                            <div className="w-full lg:w-6 p-3 border-1 border-round surface-border flex align-items-center hover:surface-100 cursor-pointer border-radius">
+                                <img alt="avatar" src={`/demo/images/avatar/circle/avatar-m-1.png`} className="w-2rem flex-shrink-0 mr-2" />
+                                <span className="text-900 text-lg font-medium">Tom Brown</span>
+                            </div>
+                            <div className="w-full lg:w-6 p-3 border-1 border-round surface-border flex align-items-center hover:surface-100 cursor-pointer border-radius">
+                                <img alt="avatar" src={`/demo/images/avatar/circle/avatar-f-3.png`} className="w-2rem flex-shrink-0 mr-2" />
+                                <span className="text-900 text-lg font-medium">Sally Field</span>
+                            </div>
+                        </div>
+                        <div className="flex flex-column lg:flex-row gap-3">
+                            <div className="w-full lg:w-6 p-3 border-1 border-round surface-border flex align-items-center hover:surface-100 cursor-pointer border-radius">
+                                <img alt="avatar" src={`/demo/images/avatar/circle/avatar-m-2.png`} className="w-2rem flex-shrink-0 mr-2" />
+                                <span className="text-900 text-lg font-medium">Emily Davis</span>
+                            </div>
+                            <div className="w-full lg:w-6 p-3 border-1 border-round surface-border flex align-items-center hover:surface-100 cursor-pointer">
+                                <img alt="avatar" src={`/demo/images/avatar/circle/avatar-f-4.png`} className="w-2rem flex-shrink-0 mr-2" />
+                                <span className="text-900 text-lg font-medium">Nancy Wilson</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex flex-column sm:flex-row gap-3 mt-5">
+                        <div className="flex-1 p-fluid">
+                            <InputNumber 
+                            type="text" 
+                            // value={price} 
+                            onValueChange={(e) => setPrice(e.value)} 
+                            // mode="currency" 
+                            // currency="USD" 
+                            locale="en-US"></InputNumber>
+                        </div>
+                        <Button type="button" label="Send"></Button>
+                    </div>
+                </div>
+            </div>
+
+            <div className="col-12 lg:col-6">
+                <div className="card">
+                    <div className="text-900 text-xl font-semibold mb-3">Monthly Billing</div>
+
+                    <DataTable ref={dt} value={payments} rows={5} className="datatable-responsive" emptyMessage="No products found." responsiveLayout="scroll">
+                        <Column field="name" header="Name" body={nameBodyTemplate} headerClassName="white-space-nowrap w-4"></Column>
+                        <Column field="price" header="Price" body={amountBodyTemplate} headerClassName="white-space-nowrap w-4"></Column>
+                        <Column field="date" header="Date" body={dateBodyTemplate} headerClassName="white-space-nowrap w-4"></Column>
+                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} bodyClassName="text-right" headerClassName="white-space-nowrap w-4"></Column>
+                    </DataTable>
                 </div>
             </div>
         </div>
     );
-}
+};
 
-
-
-export default withAuth(ECommerce) 
+export default withAuth(Banking);
