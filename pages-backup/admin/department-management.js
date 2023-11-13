@@ -42,7 +42,6 @@ const Crud = () => {
     const dt = useRef(null);
     const formikRef = useRef();
 
-    console.log(totalRecords)
 
     const fetchProducts = async () => {
         try {
@@ -137,13 +136,12 @@ const Crud = () => {
 
             } catch (error) {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the department', life: 3000 });
-                console.log('An error occurred while saving the department', error?.response?.data?.message);
+                
             }
         }
     };
 
     const editProduct = (product) => {
-        console.log(product)
         setProduct({ ...product });
         setProductDialog(true);
     };
@@ -293,7 +291,6 @@ const Crud = () => {
         </>
     );
 
-    console.log(product, file, 'product')
 
     return (
         <div className="grid crud-demo">
@@ -322,7 +319,6 @@ const Crud = () => {
                         responsiveLayout="scroll"
                         loading={loading}
                         onPage={e => {
-                            console.log(e, 'pagepagepagepagepagepage')
                             setPage(e.page + 1);
                             setLimit(e.rows);
                         }}
@@ -354,7 +350,6 @@ const Crud = () => {
                             setProduct(values);  // Update the product state with the form values
                             saveProduct();  // Call the existing saveProduct function
                             setSubmitting(false);
-                            console.log(values)
                         }}
                         enableReinitialize={true}
                         innerRef={formikRef}

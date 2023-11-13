@@ -80,6 +80,9 @@ const AppConfig = (props) => {
         applyScale();
     }, [layoutConfig.scale]);
 
+    useEffect(() => {
+        changeTheme('blue')
+    }, [])
     return (
         <>
             {/* <button className="layout-config-button p-link" type="button" onClick={onConfigButtonClick}>

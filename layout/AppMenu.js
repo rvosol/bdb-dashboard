@@ -52,7 +52,20 @@ const AppMenu = () => {
                 {
                     label: 'Calendar',
                     icon: 'pi pi-fw pi-calendar',
-                    to: '/apps/calendar'
+                    to: '/apps/calendar',
+                    items: [
+                        {
+                            label: 'App',
+                            icon: 'pi pi-fw pi-inbox',
+                            to: '/apps/calendar'
+                        },
+                        {
+                            label: 'Settings',
+                            icon: 'pi pi-fw pi-inbox',
+                            to: '/apps/calendar/all' 
+                        },
+
+                    ]
                 },
                 // {
                 //     label: 'Chat',
@@ -266,7 +279,7 @@ const AppMenu = () => {
         //                     icon: 'pi pi-fw pi-cog',
         //                     to: '/auth/reset-password'
         // },
-                        
+
         //                 {
         //                     label: 'Verification',
         //                     icon: 'pi pi-fw pi-envelope',
@@ -392,8 +405,8 @@ const AppMenu = () => {
                         },
                     ]
                 },
-                
-               
+
+
                 {
                     label: 'Contact Management',
                     icon: 'pi pi-fw pi-id-card',

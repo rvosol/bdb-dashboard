@@ -9,9 +9,7 @@ const withoutAuth = (WrappedComponent) => {
         const { isAuth, loading } = useContext(AuthContext);
 
         useEffect(() => {
-          console.log("Checking isAuth value:", isAuth);
           if (!loading && isAuth) {
-              console.log("Redirecting to login because isAuth is false");
               Router.replace('/');
           }
       }, [isAuth, loading]);

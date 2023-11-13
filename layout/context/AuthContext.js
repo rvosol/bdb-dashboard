@@ -40,7 +40,6 @@ export const AuthProvider = ({ children }) => {
             router.push(`/auth/verification?email=${credentials?.email}&traceId=${response?.data?.data?.traceId}`)
             setLoginLoad(false)
         } catch (error) {
-            console.log('Failed to login', error?.response?.data?.error);
             // toast.error(error?.response?.data?.error);
             toast.current.show({ severity: 'error', summary: 'Error Message', detail: error?.response?.data?.error, life: 3000 });
             setLoginLoad(false)
@@ -59,7 +58,6 @@ export const AuthProvider = ({ children }) => {
             setLoginLoad(false)
             router.push(`/`)
         } catch (error) {
-            console.log('Failed to login', error?.response?.data?.message);
             // toast.error(error?.response?.data?.message);
             toast.current.show({ severity: 'error', summary: 'Error Message', detail: error?.response?.data?.message, life: 3000 });
             setLoginLoad(false)

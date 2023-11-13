@@ -118,7 +118,6 @@ const Crud = () => {
             formData.append('contactId', product.contactId);
             formData.append('status', 'active');
             if (file) {
-                console.log(file, 'file file')
                 formData.append('photo', file);
             }
 
@@ -153,13 +152,12 @@ const Crud = () => {
 
             } catch (error) {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the contact', life: 3000 });
-                console.log('An error occurred while saving the contact', error?.response?.data?.message);
+                
             }
         }
     };
 
     const editProduct = (product) => {
-        console.log(product)
         setProduct({ ...product });
         setProductDialog(true);
     };
@@ -309,7 +307,6 @@ const Crud = () => {
         </>
     );
 
-    console.log(product, file, 'product')
 
     return (
         <div className="grid crud-demo">
@@ -338,7 +335,6 @@ const Crud = () => {
                         responsiveLayout="scroll"
                         loading={loading}
                         onPage={e => {
-                            console.log(e, 'pagepagepagepagepagepage')
                             setPage(e.page + 1);
                             setLimit(e.rows);
                         }}
@@ -387,7 +383,6 @@ const Crud = () => {
                             setProduct(values);  // Update the product state with the form values
                             saveProduct();  // Call the existing saveProduct function
                             setSubmitting(false);
-                            console.log(values)
                         }}
                         enableReinitialize={true}
                         innerRef={formikRef}
@@ -418,8 +413,6 @@ const Crud = () => {
                                         onHide={hideDialog}
                                     >
 
-                                        {console.log(formik.errors.firstName)}
-                                        {console.log(formik.touched.firstName)}
                                         {product.image && <img src={`/demo/images/contact/${product.image}`} alt={product.image} width="150" className="mt-0 mx-auto mb-5 block shadow-2" />}
                                         <div className="field">
                                             <label htmlFor="firstName">Contact ID</label>
@@ -603,7 +596,6 @@ const Crud = () => {
                                             <FileUpload
                                                 name="photo"
                                                 onSelect={(e) => {
-                                                    console.log(e.files, '650650');
                                                     formik.setFieldValue('photo', e.files[0]);
                                                     setFile(e.files[0]);
                                                     if (product._id) { // Check if it is edit mode

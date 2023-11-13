@@ -99,7 +99,7 @@ const Crud = () => {
     const hideDialog = () => {
         setSubmitted(false);
         setProductDialog(false);
-        formikRef.current.resetForm(); 
+        formikRef.current.resetForm();
         setFile(null)
     };
 
@@ -130,7 +130,6 @@ const Crud = () => {
             formData.append('role', 'admin');
             formData.append('password', product.password);
             if (file) {
-                console.log(file, 'file file')
                 formData.append('photo', file);
             }
 
@@ -165,13 +164,12 @@ const Crud = () => {
 
             } catch (error) {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the Users', life: 3000 });
-                console.log('An error occurred while saving the User', error?.response?.data?.message);
+
             }
         }
     };
 
     const editProduct = (product) => {
-        console.log(product)
         setProduct({ ...product, department: product?.department?._id, position: product?.position?._id, password: '' });
         setProductDialog(true);
     };
@@ -319,22 +317,21 @@ const Crud = () => {
 
 
 
-    const [passwordEmailSending,setPasswordEmailSending] = useState(false)
+    const [passwordEmailSending, setPasswordEmailSending] = useState(false)
     const handlePasswordReset = (userData) => {
         setPasswordEmailSending(true)
-        
+
 
         axiosInstance
-          .patch(`admin/subAdmin/passwordReset/send/${userData._id}`, {})
-          .then((response) => {})
-          .catch((err) => {
-            console.error(err?.response?.data?.error);
-          }).finally(() => {
-              setPasswordEmailSending(false);
-          });
+            .patch(`admin/subAdmin/passwordReset/send/${userData._id}`, {})
+            .then((response) => { })
+            .catch((err) => {
+                console.error(err?.response?.data?.error);
+            }).finally(() => {
+                setPasswordEmailSending(false);
+            });
     };
 
-    console.log(file, product._id, product.photo, 'deeeeeeeee')
     return (
         <div className="grid crud-demo">
             <div className="col-12">
@@ -362,7 +359,6 @@ const Crud = () => {
                         responsiveLayout="scroll"
                         loading={loading}
                         onPage={e => {
-                            console.log(e, 'pagepagepagepagepagepage')
                             setPage(e.page + 1);
                             setLimit(e.rows);
                         }}
@@ -414,33 +410,32 @@ const Crud = () => {
                             setProduct(values);  // Update the product state with the form values
                             saveProduct();  // Call the existing saveProduct function
                             setSubmitting(false);
-                            console.log(values)
                         }}
                         enableReinitialize={true}
                         innerRef={formikRef}
                     >
                         {formik => {
                             const ProductDialogFooter = (
-                              <>
-                                <Button
-                                  label= {passwordEmailSending? "Processing" :"Password Reset"} 
-                                  icon="pi pi-envelope"
-                                  className="p-button-text"
-                                  onClick={()=>{handlePasswordReset(formik?.initialValues);}} // Manually trigger the submit event
-                                />
-                                <Button
-                                  label="Close"
-                                  icon="pi pi-times"
-                                  className="p-button-text"
-                                  onClick={hideDialog}
-                                />
-                                <Button
-                                  label="Save"
-                                  icon="pi pi-check"
-                                  className="p-button-text"
-                                  onClick={formik.handleSubmit} // Manually trigger the submit event
-                                />
-                              </>
+                                <>
+                                    <Button
+                                        label={passwordEmailSending ? "Processing" : "Password Reset"}
+                                        icon="pi pi-envelope"
+                                        className="p-button-text"
+                                        onClick={() => { handlePasswordReset(formik?.initialValues); }} // Manually trigger the submit event
+                                    />
+                                    <Button
+                                        label="Close"
+                                        icon="pi pi-times"
+                                        className="p-button-text"
+                                        onClick={hideDialog}
+                                    />
+                                    <Button
+                                        label="Save"
+                                        icon="pi pi-check"
+                                        className="p-button-text"
+                                        onClick={formik.handleSubmit} // Manually trigger the submit event
+                                    />
+                                </>
                             );
                             return (
                                 <Form>
@@ -456,8 +451,6 @@ const Crud = () => {
                                         onHide={hideDialog}
                                     >
 
-                                        {console.log(formik.errors)}
-                                        {console.log(formik.touched.firstName)}
                                         {product.image && <img src={`/demo/images/User/${product.image}`} alt={product.image} width="150" className="mt-0 mx-auto mb-5 block shadow-2" />}
                                         <div className="field">
                                             <label htmlFor="firstName">User Id</label>
@@ -562,7 +555,7 @@ const Crud = () => {
                                                 <small className="p-invalid">{formik.errors.email}</small> : null}
                                         </div>
 
-                                     
+
 
 
 
@@ -668,7 +661,6 @@ const Crud = () => {
                                             <FileUpload
                                                 name="photo"
                                                 onSelect={(e) => {
-                                                    console.log(e.files, '650650');
                                                     formik.setFieldValue('photo', e.files[0]);
                                                     setFile(e.files[0]);
                                                     if (product._id) { // Check if it is edit mode
@@ -718,4 +710,4 @@ const Crud = () => {
     );
 };
 
-export default withSuperAdminAuth(Crud) ;
+export default withSuperAdminAuth(Crud);

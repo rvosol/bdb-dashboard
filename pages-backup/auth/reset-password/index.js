@@ -59,7 +59,6 @@ function NewPassword() {
 
     const submitHandler = async () => {
       setIsSubmitting(true);
-      console.log("data", { ...data, resetPasswordToken: passwordResetToken });
 
       axiosInstance
         .post("/admin/auth/resetPassword", {

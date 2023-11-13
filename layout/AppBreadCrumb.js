@@ -21,7 +21,6 @@ const AppBreadcrumb = (props) => {
 
         setBreadcrumb(filteredBreadcrumbs);
     }, [router, breadcrumbs]);
-    console.log(router.pathname)
 
     let firstLabel = true
     // if(router.pathname  !== "/apps/calendar" || router.pathname  !== "/dashboard-profile") {

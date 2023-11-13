@@ -11,11 +11,10 @@ export const LayoutProvider = (props) => {
         menuMode: 'static',
         menuTheme: "transparent",
         colorScheme: 'light',
-        theme: 'blue',
+        theme: 'indigo',
         scale: 12
     });
 
-    console.log(layoutConfig)
 
     const [layoutState, setLayoutState] = useState({
         staticMenuDesktopInactive: false,

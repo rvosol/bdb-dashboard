@@ -43,7 +43,6 @@ const Crud = () => {
     const dt = useRef(null);
     const formikRef = useRef();
 
-    console.log(totalRecords)
 
     const fetchProducts = async () => {
         try {
@@ -86,7 +85,7 @@ const Crud = () => {
     const hideDialog = () => {
         setSubmitted(false);
         setProductDialog(false);
-        formikRef.current.resetForm(); 
+        formikRef.current.resetForm();
     };
 
     const hideDeleteProductDialog = () => {
@@ -138,13 +137,12 @@ const Crud = () => {
 
             } catch (error) {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the department', life: 3000 });
-                console.log('An error occurred while saving the department', error?.response?.data?.message);
+
             }
         }
     };
 
     const editProduct = (product) => {
-        console.log(product)
         setProduct({ ...product });
         setProductDialog(true);
     };
@@ -294,7 +292,6 @@ const Crud = () => {
         </>
     );
 
-    console.log(product, file, 'product')
 
     return (
         <div className="grid crud-demo">
@@ -323,7 +320,6 @@ const Crud = () => {
                         responsiveLayout="scroll"
                         loading={loading}
                         onPage={e => {
-                            console.log(e, 'pagepagepagepagepagepage')
                             setPage(e.page + 1);
                             setLimit(e.rows);
                         }}
@@ -332,11 +328,11 @@ const Crud = () => {
                     >
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '4rem' }}></Column> */}
                         {/* <Column field="code" header="Code" sortable body={codeBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column> */}
-                        <Column field="departmentId" header="Department ID"  body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+                        <Column field="departmentId" header="Department ID" body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
 
                         <Column field="name" header="Name" body={priceBodyTemplate} ></Column>
 
-                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate}  headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
 
                         <Column body={actionBodyTemplate} header="Action" headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
@@ -355,7 +351,6 @@ const Crud = () => {
                             setProduct(values);  // Update the product state with the form values
                             saveProduct();  // Call the existing saveProduct function
                             setSubmitting(false);
-                            console.log(values)
                         }}
                         enableReinitialize={true}
                         innerRef={formikRef}
@@ -400,7 +395,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.departmentId && formik.touched.departmentId  ?
+                                            {formik.errors.departmentId && formik.touched.departmentId ?
                                                 <small className="p-invalid">{formik.errors.departmentId}</small> : null}
                                         </div>
 
@@ -418,7 +413,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.name && formik.touched.name  ?
+                                            {formik.errors.name && formik.touched.name ?
                                                 <small className="p-invalid">{formik.errors.name}</small> : null}
                                         </div>
                                     </Dialog>
@@ -458,4 +453,4 @@ const Crud = () => {
     );
 };
 
-export default withSuperAdminAuth(Crud) ;
+export default withSuperAdminAuth(Crud);

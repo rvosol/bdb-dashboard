@@ -91,7 +91,7 @@ const Crud = () => {
     const hideDialog = () => {
         setSubmitted(false);
         setProductDialog(false);
-        formikRef.current.resetForm(); 
+        formikRef.current.resetForm();
     };
 
     const hideDeleteProductDialog = () => {
@@ -119,7 +119,6 @@ const Crud = () => {
             formData.append('contactId', product.contactId);
             formData.append('status', 'active');
             if (file) {
-                console.log(file, 'file file')
                 formData.append('photo', file);
             }
 
@@ -154,13 +153,12 @@ const Crud = () => {
 
             } catch (error) {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the contact', life: 3000 });
-                console.log('An error occurred while saving the contact', error?.response?.data?.message);
+
             }
         }
     };
 
     const editProduct = (product) => {
-        console.log(product)
         setProduct({ ...product });
         setProductDialog(true);
     };
@@ -319,7 +317,6 @@ const Crud = () => {
         </>
     );
 
-    console.log(product, file, 'product')
 
     return (
         <div className="grid crud-demo">
@@ -348,25 +345,24 @@ const Crud = () => {
                         responsiveLayout="scroll"
                         loading={loading}
                         onPage={e => {
-                            console.log(e, 'pagepagepagepagepagepage')
                             setPage(e.page + 1);
                             setLimit(e.rows);
                         }}
                         first={(page - 1) * limit}
                     >
-                         {/* <Column header="Contact ID" field='contactId'></Column> */}
+                        {/* <Column header="Contact ID" field='contactId'></Column> */}
                         {/* <Column selectionMode="multiple" headerStyle={{ width: '4rem' }}></Column> */}
                         {/* <Column field="code" header="Code" sortable body={codeBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column> */}
                         <Column field="firstName" header="First Name" ></Column>
                         <Column field="lastName" header="Last Name" ></Column>
                         <Column field="email" header="Email" body={priceBodyTemplate} ></Column>
-                        <Column field="mobile" header="Mobile"  body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="mobile" header="Mobile" body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
 
                         <Column field="mobile" header="Mobile Number" ></Column>
                         <Column field="phone" header="Phone Number" ></Column>
                         <Column field="position" header="Position" body={ratingBodyTemplate} ></Column>
                         <Column field="department" header="Department" body={ratingBodyTemplate2} ></Column>
-                        
+
                         <Column header='Action' body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
 
@@ -401,7 +397,6 @@ const Crud = () => {
                             setProduct(values);  // Update the product state with the form values
                             saveProduct();  // Call the existing saveProduct function
                             setSubmitting(false);
-                            console.log(values)
                         }}
                         enableReinitialize={true}
                         innerRef={formikRef}
@@ -432,8 +427,6 @@ const Crud = () => {
                                         onHide={hideDialog}
                                     >
 
-                                        {console.log(formik.errors.firstName)}
-                                        {console.log(formik.touched.firstName)}
                                         {product.image && <img src={`/demo/images/contact/${product.image}`} alt={product.image} width="150" className="mt-0 mx-auto mb-5 block shadow-2" />}
                                         <div className="field">
                                             <label htmlFor="firstName">Contact ID</label>
@@ -617,7 +610,6 @@ const Crud = () => {
                                             <FileUpload
                                                 name="photo"
                                                 onSelect={(e) => {
-                                                    console.log(e.files, '650650');
                                                     formik.setFieldValue('photo', e.files[0]);
                                                     setFile(e.files[0]);
                                                     if (product._id) { // Check if it is edit mode

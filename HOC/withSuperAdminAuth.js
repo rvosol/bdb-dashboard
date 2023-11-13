@@ -10,9 +10,7 @@ const withSuperAdminAuth = (WrappedComponent) => {
         const { isAuth, loading, userInfo } = useContext(AuthContext);
 
         useEffect(() => {
-          console.log("Checking isAuth value:", isAuth);
           if (!loading && (!isAuth || userInfo?.role !== 'superAdmin')) {
-            console.log("Redirecting to login because isAuth is false or the user is not a superAdmin");
             Router.replace('/auth/login');
         }
       }, [isAuth, loading]);

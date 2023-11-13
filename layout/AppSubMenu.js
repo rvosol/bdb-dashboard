@@ -49,7 +49,6 @@ const AppSubMenu = (props) => {
                     if(item.label === 'Admin' && userInfo?.role !== 'superAdmin'){
                         return null
                     }
-                    console.log(item, 'asdfasdfasdfasdfasdfasdfasdf')
                     return !item.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
                 })}
             </ul>

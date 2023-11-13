@@ -92,7 +92,7 @@ const Crud = () => {
     const hideDialog = () => {
         setSubmitted(false);
         setProductDialog(false);
-        formikRef.current.resetForm(); 
+        formikRef.current.resetForm();
     };
 
     const hideDeleteProductDialog = () => {
@@ -148,13 +148,12 @@ const Crud = () => {
 
             } catch (error) {
                 toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the Client', life: 3000 });
-                console.log('An error occurred while saving the Client', error?.response?.data?.message);
+
             }
         }
     };
 
     const editProduct = (product) => {
-        console.log(product)
         setProduct({ ...product, contact: product?.contact?._id });
         setProductDialog(true);
     };
@@ -304,7 +303,6 @@ const Crud = () => {
         </>
     );
 
-    console.log(product, file, 'product')
 
     return (
         <div className="grid crud-demo">
@@ -333,7 +331,6 @@ const Crud = () => {
                         responsiveLayout="scroll"
                         loading={loading}
                         onPage={e => {
-                            console.log(e, 'pagepagepagepagepagepage')
                             setPage(e.page + 1);
                             setLimit(e.rows);
                         }}
@@ -341,14 +338,14 @@ const Crud = () => {
                     >
 
                         <Column field="clientId" header="Client ID" headerStyle={{ minWidth: '15rem' }}></Column>
-                        <Column field="name" header="name"  body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+                        <Column field="name" header="name" body={nameBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
                         {/* <Column header="Image" body={imageBodyTemplate}></Column> */}
                         <Column field="barangay" header="Country Code" body={priceBodyTemplate} ></Column>
-                        <Column field="province" header="Province"  body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="province" header="Province" body={categoryBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                         <Column field="city" header="City" body={ratingBodyTemplate} ></Column>
                         <Column field="zipCode" header="ZipCode" ></Column>
                         <Column field="address" header="Address" body={ratingBodyTemplate} ></Column>
-                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate}  headerStyle={{ minWidth: '10rem' }}></Column>
+                        <Column field="inventoryStatus" header="Status" body={statusBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                         <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
                     </DataTable>
 
@@ -378,7 +375,6 @@ const Crud = () => {
                             setProduct(values);  // Update the product state with the form values
                             saveProduct();  // Call the existing saveProduct function
                             setSubmitting(false);
-                            console.log(values)
                         }}
                         enableReinitialize={true}
                         innerRef={formikRef}
@@ -399,7 +395,6 @@ const Crud = () => {
                                 <Form>
 
 
-{console.log(formik?.errors, formik?.touched, 'formik')}
                                     <Dialog
                                         visible={productDialog}
                                         style={{ width: '450px' }}
@@ -423,7 +418,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.clientId && formik.touched.clientId  ?
+                                            {formik.errors.clientId && formik.touched.clientId ?
                                                 <small className="p-invalid">{formik.errors.clientId}</small> : null}
                                         </div>
 
@@ -441,7 +436,7 @@ const Crud = () => {
                                                 }}
                                                 onBlur={formik.handleBlur}
                                             />
-                                            {formik.errors.name && formik.touched.name  ?
+                                            {formik.errors.name && formik.touched.name ?
                                                 <small className="p-invalid">{formik.errors.name}</small> : null}
                                         </div>
 
@@ -547,22 +542,22 @@ const Crud = () => {
                                         </div> */}
 
                                         <div className="field">
-    <label htmlFor="contact">Contact</label>
-    <Dropdown
-        id="contact"
-        value={formik.values.contact}  
-        options={contacts.map(dept => ({ label: dept.firstName, value: dept._id }))}  
-        className={classNames("w-full ", { 'p-invalid': formik.errors.contact && formik.touched.contact })}
-        onChange={(e) => {
-            formik.setFieldValue('contact', e.value); // set the value in formik
-            onInputChange({target: {value: e.value, name: 'contact'}}, 'contact');  // Also update the existing product state with new contact id
-        }}
-        optionLabel="label"
-        placeholder="Select a contact"
-    />
-    {formik.errors.contact && formik.touched.contact ?
-        <small className="p-invalid">{formik.errors.contact}</small> : null}
-</div>
+                                            <label htmlFor="contact">Contact</label>
+                                            <Dropdown
+                                                id="contact"
+                                                value={formik.values.contact}
+                                                options={contacts.map(dept => ({ label: dept.firstName, value: dept._id }))}
+                                                className={classNames("w-full ", { 'p-invalid': formik.errors.contact && formik.touched.contact })}
+                                                onChange={(e) => {
+                                                    formik.setFieldValue('contact', e.value); // set the value in formik
+                                                    onInputChange({ target: { value: e.value, name: 'contact' } }, 'contact');  // Also update the existing product state with new contact id
+                                                }}
+                                                optionLabel="label"
+                                                placeholder="Select a contact"
+                                            />
+                                            {formik.errors.contact && formik.touched.contact ?
+                                                <small className="p-invalid">{formik.errors.contact}</small> : null}
+                                        </div>
 
 
 

@@ -15,7 +15,6 @@ const Banking = () => {
     const [products, setProducts] = useState([]);
     const { layoutConfig } = useContext(LayoutContext);
     const dt = useRef(null);
-    console.log(products, 'products')
     const payments = [
         { name: 'ABC Company', amount: 750.6, paid: true, date: '06/04/2022' },
         { name: 'Jane Doe', amount: 450.5, paid: true, date: '07/04/2022' },

@@ -37,7 +37,6 @@ function Verification() {
         }
     };
 
-    console.log(router?.query)
     const maskEmail = (email) => {
         if (!email) return 'Loading...';
         const [namePart, domain] = email.split('@');
