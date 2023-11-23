@@ -1,262 +1,554 @@
 // fullcalendar core import
-import FullCalendar from '@fullcalendar/react';
+import FullCalendar from "@fullcalendar/react";
 // fullcalendar plugins imports
-import dayGridPlugin from '@fullcalendar/daygrid';
-import interactionPlugin from '@fullcalendar/interaction';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import { Button } from 'primereact/button';
-import { Calendar as PRCalendar } from 'primereact/calendar';
-import { Dialog } from 'primereact/dialog';
-import { Dropdown } from 'primereact/dropdown';
-import { InputText } from 'primereact/inputtext';
-import { InputTextarea } from 'primereact/inputtextarea';
-import React, { useEffect, useState } from 'react';
-import { EventService } from '../../../demo/service/EventService';
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import { Button } from "primereact/button";
+import { Calendar as PRCalendar } from "primereact/calendar";
+import { Dialog } from "primereact/dialog";
+import { Dropdown } from "primereact/dropdown";
+import { InputText } from "primereact/inputtext";
+import { InputTextarea } from "primereact/inputtextarea";
+import React, { useEffect, useRef, useState } from "react";
+import { EventService } from "../../../demo/service/EventService";
+import axiosInstance from "../../../utils/axiosInstance";
+import moment from "moment";
+import { Toast } from "primereact/toast";
 
 const CalendarDemo = () => {
-    const [events, setEvents] = useState(null);
-    const [tags, setTags] = useState([]);
-    const [showDialog, setShowDialog] = useState(false);
-    const [view, setView] = useState('');
-    const [changedEvent, setChangedEvent] = useState({
-        title: '',
-        start: null,
-        end: null,
-        allDay: null,
-        location: '',
-        borderColor: '',
-        textColor: '',
-        description: '',
-        tag: {
-            name: '',
-            color: ''
-        }
+  const toast = useRef(null);
+  const [events, setEvents] = useState(null);
+  const [tags, setTags] = useState([]);
+  const [showDialog, setShowDialog] = useState(false);
+  const [view, setView] = useState("");
+  const [changedEvent, setChangedEvent] = useState({
+    calenderId: "",
+    calenderName: "",
+    title: "",
+    start: null,
+    end: null,
+    allDay: null,
+    location: "",
+    borderColor: "",
+    textColor: "",
+    description: "",
+    occurrence: { name: "" },
+    tag: {
+      name: "",
+      color: "",
+    },
+  });
+
+  const onEventClick = (e) => {
+    const { start, end } = e.event;
+    let plainEvent = e.event.toPlainObject({
+      collapseExtendedProps: true,
+      collapseColor: true,
     });
+    setView("display");
+    setShowDialog(true);
+    setChangedEvent((prevChangeState) => ({
+      ...prevChangeState,
+      ...plainEvent,
+      start,
+      end: end ? end : start,
+    }));
+  };
 
-    const onEventClick = (e) => {
-        const { start, end } = e.event;
-        let plainEvent = e.event.toPlainObject({ collapseExtendedProps: true, collapseColor: true });
-        setView('display');
-        setShowDialog(true);
-        setChangedEvent((prevChangeState) => ({ ...prevChangeState, ...plainEvent, start, end: end ? end : start }));
-    };
+  const occurrences = [
+    { name: "daily" },
+    { name: "weekly" },
+    { name: "monthly" },
+    { name: "yearly" },
+  ];
 
-    useEffect(() => {
-        EventService.getEvents().then((data) => {
-            setEvents(data);
-            const _tags = [];
-            data.forEach((event) => {
-                _tags.push(event.tag);
-            });
-            setTags(_tags);
-        });
-    }, []);
+  const colors = [
+    { color: "#616161", name: "Graphite" },
+    { color: "#9e69af", name: "Calendar Color" },
+    { color: "#7986cb", name: "Lavender" },
+    { color: "#0b8043", name: "Basil" },
+    { color: "#e67c73", name: "Flamingo" },
+    { color: "#3f51b5", name: "Blueberry" },
+  ];
 
-    const handleSave = () => {
-        if (!validate()) {
-            return;
+  const [selectedCalendar, setSelectedCalendar] = useState([]);
+
+  const fetchCalendarData = async () => {
+    try{
+        const response = await axiosInstance.get(`/admin/calendar/myCalendar`);
+        let calendarData = response?.data?.data?.docs?.map((res) => ({
+            calenderId : res._id,
+            calenderName : res.title,
+        }));
+        setSelectedCalendar(calendarData);
+    } catch (error) {
+        console.error('Error fetching calendar data:', error);
+    }
+  };
+console.log("tt",setSelectedCalendar);
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get("/admin/events");
+
+      if (response.data && response.data.status === "success") {
+        let resData = response.data?.data?.docs?.map((event) => ({
+          id: event._id,
+          title: event.title,
+          start: moment.utc(event.startAt).format("YYYY-MM-DD HH:mm"),
+          end: moment.utc(event.endAt).format("YYYY-MM-DD HH:mm"),
+          location: event.location,
+          description: event.description,
+          occurrence: event.occurrence,
+          color: event.color,
+        }));
+
+        setEvents(resData);
+      } else {
+        console.error("Error fetching events:", response.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!validate()) {
+      return;
+    }
+  
+    try {
+
+      const eventData = {
+        id: changedEvent.id,
+        calendar: changedEvent.calenderId,
+        title: changedEvent.title,
+        startAt: changedEvent.start.toISOString(),
+        endAt: changedEvent.end.toISOString(),
+        location: changedEvent.location,
+        description: changedEvent.description,
+        color: changedEvent.tag.color,
+        occurrence: changedEvent.occurrence.name,
+      };
+  console.log(eventData);
+      if (changedEvent.id) {
+        const response = await axiosInstance.patch(`/admin/events`, eventData);
+  
+        if (response.data && response.data.status === "success") {
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Event updated', life: 3000 });
+            fetchData();
         } else {
-            const _clickedEvent = { ...changedEvent, backgroundColor: changedEvent.tag.color, borderColor: changedEvent.tag.color, textColor: '#212121' };
-            setShowDialog(false);
-            if (_clickedEvent.id) {
-                const _events = events.map((i) => (i.id.toString() === _clickedEvent.id.toString() ? (i = _clickedEvent) : i));
-                setEvents(_events);
-            } else {
-                setEvents((prevState) => [...prevState, { ..._clickedEvent, id: Math.floor(Math.random() * 10000) }]);
-            }
+            console.error('Failed to update event');
         }
+      } else {
+        const response = await axiosInstance.post("/admin/events", eventData);
+  
+        if (response.data && response.data.status === "success") {
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Event Created', life: 3000 });
+            fetchData();
+        } else {
+            console.error('Failed to create event');
+        }
+      }
+    } catch (error) {
+        toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the event', life: 3000 });
+    }
+    setShowDialog(false);
+  };
+
+  const handleDelete = async () => {
+        try {
+            const eventId = changedEvent.id;
+
+            await axiosInstance.delete(`/admin/events/${eventId}`);
+            toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Event Deleted', life: 3000 });
+            fetchData();
+        } catch (err) {
+            toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed', life: 3000 });
+        }
+        setShowDialog(false);
     };
 
-    const validate = () => {
-        let { start, end, title } = changedEvent;
-        return start && end && title;
-    };
 
-    const onEditClick = () => {
-        setView('edit');
-    };
+  useEffect(() => {
+    fetchData();
+    fetchCalendarData();
+    const _tags = colors.map((c) => ({ name: c.name, color: c.color }));
+    setTags(_tags);
+  }, []);
 
-    const onDateSelect = (e) => {
-        setView('new');
-        setShowDialog(true);
-        setChangedEvent({
-            ...e,
-            title: '',
-            location: '',
-            borderColor: '',
-            textColor: '',
-            description: '',
-            tag: {
-                name: '',
-                color: ''
-            }
-        });
-    };
+  const validate = () => {
+    let { start, end, title } = changedEvent;
+    return start && end && title;
+  };
 
-    const selectedItemTemplate = () => {
-        return (
-            <div className="flex align-items-center">
-                <div className="flex-shrink-0 w-1rem h-1rem mr-2 border-circle" style={{ backgroundColor: changedEvent.tag.color }}></div>
-                <div>{changedEvent.tag.name}</div>
-            </div>
-        );
-    };
+  const onEditClick = () => {
+    setView("edit");
+  };
 
-    const itemOptionTemplate = (tag) => {
-        return (
-            <div className="flex align-items-center">
-                <div className="flex-shrink-0 w-1rem h-1rem mr-2 border-circle" style={{ backgroundColor: tag.color }}></div>
-                <div>{tag.name}</div>
-            </div>
-        );
-    };
+  const onDateSelect = (e) => {
+    setView("new");
+    setShowDialog(true);
+    setChangedEvent({
+      ...e,
+      title: "",
+      location: "",
+      borderColor: "",
+      textColor: "",
+      description: "",
+      tag: {
+        name: "",
+        color: "",
+      },
+    });
+  };
 
-    const footer = (
-        <>
-            {view === 'display' ? <Button type="button" label="Edit" icon="pi pi-pencil" onClick={onEditClick} /> : null}
-            {view === 'new' || view === 'edit' ? <Button type="button" label="Save" icon="pi pi-check" disabled={!changedEvent.start || !changedEvent.end} onClick={handleSave} /> : null}
-        </>
-    );
-
+  const selectedItemTemplate = () => {
     return (
-        <div className="grid">
-            <div className="col-12">
-                <div className="card">
-                    <FullCalendar
-                        events={events}
-                        eventClick={onEventClick}
-                        select={onDateSelect}
-                        initialDate="2022-05-11"
-                        initialView="dayGridMonth"
-                        height={720}
-                        plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                        headerToolbar={{
-                            left: 'prev,next today',
-                            center: 'title',
-                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                        }}
-                        editable
-                        selectable
-                        selectMirror
-                        dayMaxEvents
-                    />
-
-                    <Dialog
-                        visible={showDialog}
-                        style={{ width: '36rem' }}
-                        modal
-                        headerClassName="text-900 font-semibold text-xl"
-                        header={view === 'display' ? changedEvent.title : view === 'new' ? 'New Event' : 'Edit Event'}
-                        breakpoints={{ '960px': '75vw', '640px': '90vw' }}
-                        footer={footer}
-                        closable
-                        onHide={() => setShowDialog(false)}
-                    >
-                        <>
-                            {view === 'display' ? (
-                                <React.Fragment>
-                                    <span className="text-900 font-semibold block mb-2">Description</span>
-                                    <span className="block mb-3">{changedEvent.description}</span>
-
-                                    <div className="grid">
-                                        <div className="col-6">
-                                            <div className="text-900 font-semibold mb-2">Start</div>
-                                            <p className="flex align-items-center m-0">
-                                                <i className="pi pi-fw pi-clock text-700 mr-2"></i>
-                                                <span>{changedEvent.start.toISOString().slice(0, 10)}</span>
-                                            </p>
-                                        </div>
-                                        <div className="col-6">
-                                            <div className="text-900 font-semibold mb-2">End</div>
-                                            <p className="flex align-items-center m-0">
-                                                <i className="pi pi-fw pi-clock text-700 mr-2"></i>
-                                                <span>{changedEvent.end.toISOString().slice(0, 10)}</span>
-                                            </p>
-                                        </div>
-                                        <div className="col-12">
-                                            <div className="text-900 font-semibold mb-2">Location</div>
-                                            <p className="flex align-items-center m-0">
-                                                <i className="pi pi-fw pi-clock text-700 mr-2"></i>
-                                                <span>{changedEvent.location}</span>
-                                            </p>
-                                        </div>
-                                        <div className="col-12">
-                                            <div className="text-900 font-semibold mb-2">Color</div>
-                                            <p className="flex align-items-center m-0">
-                                                <span className="inline-flex flex-shrink-0 w-1rem h-1rem mr-2 border-circle" style={{ backgroundColor: changedEvent.tag.color }}></span>
-                                                <span>{changedEvent.tag.name}</span>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </React.Fragment>
-                            ) : (
-                                <div className="grid p-fluid formgrid">
-                                    <div className="col-12 md:col-6 field">
-                                        <label htmlFor="title" className="text-900 font-semibold">
-                                            Title
-                                        </label>
-                                        <span className="p-input-icon-left">
-                                            <i className="pi pi-pencil"></i>
-                                            <InputText id="title" value={changedEvent.title} onChange={(e) => setChangedEvent((prevState) => ({ ...prevState, title: e.target.value }))} type="text" placeholder="Title" />
-                                        </span>
-                                    </div>
-                                    <div className="col-12 md:col-6 field">
-                                        <label htmlFor="location" className="text-900 font-semibold">
-                                            Location
-                                        </label>
-                                        <span className="p-input-icon-left">
-                                            <i className="pi pi-map-marker"></i>
-                                            <InputText id="location" value={changedEvent.location} onChange={(e) => setChangedEvent((prevState) => ({ ...prevState, location: e.target.value }))} type="text" placeholder="Location" />
-                                        </span>
-                                    </div>
-                                    <div className="col-12 field">
-                                        <label htmlFor="description" className="text-900 font-semibold">
-                                            Event Description
-                                        </label>
-                                        <InputTextarea
-                                            id="description"
-                                            type="text"
-                                            rows={5}
-                                            value={changedEvent.description}
-                                            onChange={(e) => setChangedEvent((prevState) => ({ ...prevState, description: e.target.value }))}
-                                            style={{ resize: 'none' }}
-                                        ></InputTextarea>
-                                    </div>
-
-                                    <div className="col-12 md:col-6 field">
-                                        <label htmlFor="start" className="text-900 font-semibold">
-                                            Start Date
-                                        </label>
-                                        <PRCalendar id="start" maxDate={changedEvent.end} value={changedEvent.start} onChange={(e) => setChangedEvent((prevState) => ({ ...prevState, start: e.value }))} showTime required />
-                                    </div>
-                                    <div className="col-12 md:col-6 field">
-                                        <label htmlFor="end" className="text-900 font-semibold">
-                                            End Date
-                                        </label>
-                                        <PRCalendar id="end" minDate={changedEvent.start} value={changedEvent.end} onChange={(e) => setChangedEvent((prevState) => ({ ...prevState, end: e.value }))} showTime required />
-                                    </div>
-                                    <div className="col-12 field">
-                                        <label htmlFor="company-color" className="text-900 font-semibold">
-                                            Color
-                                        </label>
-                                        <Dropdown
-                                            inputId="company-color"
-                                            value={changedEvent.tag}
-                                            options={tags}
-                                            onChange={(e) => setChangedEvent((prevState) => ({ ...prevState, tag: e.value }))}
-                                            optionLabel="name"
-                                            valueTemplate={selectedItemTemplate}
-                                            itemTemplate={itemOptionTemplate}
-                                        />
-                                    </div>
-                                </div>
-                            )}
-                        </>
-                    </Dialog>
-                </div>
-            </div>
+      <div className="flex align-items-center">
+        <div
+          className="flex-shrink-0 w-1rem h-1rem mr-2 border-circle"
+          style={{
+            backgroundColor: changedEvent.tag.color || changedEvent.color,
+          }}
+        ></div>
+        <div className="capitalize">
+          {changedEvent.tag.name || changedEvent.color}
         </div>
+      </div>
     );
+  };
+
+  const itemOptionTemplate = (tag) => {
+    return (
+      <div className="flex align-items-center">
+        <div
+          className="flex-shrink-0 w-1rem h-1rem mr-2 border-circle"
+          style={{ backgroundColor: tag.color }}
+        ></div>
+        <div className="capitalize">{tag.name}</div>
+      </div>
+    );
+  };
+
+  const footer = (
+    <>
+      {view === "display" ? (
+        <Button
+          type="button"
+          label="Edit"
+          severity="warning"
+          icon="pi pi-pencil"
+          onClick={onEditClick}
+        />
+      ) : null}
+      {view === "edit" ? (
+        <Button
+          type="button"
+          label="Update"
+          severity="secondary"
+          icon="pi pi-check"
+          disabled={!changedEvent.start || !changedEvent.end}
+          onClick={handleSave}
+        />
+      ) : null}
+      {view === "new" ? (
+        <Button
+          type="button"
+          label="Create"
+          icon="pi pi-plus"
+          disabled={!changedEvent.start || !changedEvent.end}
+          onClick={handleSave}
+        />
+      ) : null}
+      {view === "display" ? (
+        <Button
+            type="button"
+            label="Delete"
+            severity="danger"
+            icon="pi pi-trash"
+            onClick={handleDelete}
+            />
+        ) : null}
+    </>
+  );
+
+  return (
+    <div className="grid">
+      <div className="col-12">
+        <div className="card">
+        <Toast ref={toast} />
+          <FullCalendar
+            events={events}
+            eventClick={onEventClick}
+            select={onDateSelect}
+            initialDate="2023-11-01"
+            initialView="dayGridMonth"
+            height={720}
+            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+            headerToolbar={{
+              left: "prev,next today",
+              center: "title",
+              right: "dayGridMonth,timeGridWeek,timeGridDay",
+            }}
+            editable
+            selectable
+            selectMirror
+            dayMaxEvents
+          />
+
+          <Dialog
+            visible={showDialog}
+            style={{ width: "36rem" }}
+            modal
+            headerClassName="text-900 font-semibold text-xl"
+            header={
+              view === "display"
+                ? changedEvent.title
+                : view === "new"
+                ? "New Event"
+                : "Edit Event"
+            }
+            breakpoints={{ "960px": "75vw", "640px": "90vw" }}
+            footer={footer}
+            closable
+            onHide={() => setShowDialog(false)}
+          >
+            <>
+              {view === "display" ? (
+                <React.Fragment>
+                  <span className="text-900 font-semibold block mb-2">
+                    Description
+                  </span>
+                  <span className="block mb-3">{changedEvent.description}</span>
+
+                  <div className="grid">
+                    <div className="col-6">
+                      <div className="text-900 font-semibold mb-2">Start</div>
+                      <p className="flex align-items-center m-0">
+                        <i className="pi pi-fw pi-clock text-700 mr-2"></i>
+                        <span>{changedEvent.start.toISOString()}</span>
+                      </p>
+                    </div>
+                    <div className="col-6">
+                      <div className="text-900 font-semibold mb-2">End</div>
+                      <p className="flex align-items-center m-0">
+                        <i className="pi pi-fw pi-clock text-700 mr-2"></i>
+                        <span>{changedEvent.end.toISOString()}</span>
+                      </p>
+                    </div>
+                    <div className="col-12">
+                      <div className="text-900 font-semibold mb-2">
+                        Location
+                      </div>
+                      <p className="flex align-items-center m-0">
+                        <i className="pi pi-map-marker text-700 mr-2"></i>
+                        <span>{changedEvent.location}</span>
+                      </p>
+                    </div>
+                    <div className="col-12">
+                      <div className="text-900 font-semibold mb-2">Repeat</div>
+                      <p className="flex align-items-center m-0 ">
+                        <i className="pi pi-replay text-700 mr-2"></i>
+                        <span className="capitalize">
+                          {changedEvent.occurrence}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="col-12">
+                      <div className="text-900 font-semibold mb-2">Color</div>
+                      <p className="flex align-items-center m-0">
+                        <i className="pi pi-palette text-700 mr-2"></i>
+                        <span
+                          className="inline-flex flex-shrink-0 w-1rem h-1rem mr-2 border-circle"
+                          style={{
+                            backgroundColor:
+                              changedEvent.tag.color || changedEvent.color,
+                          }}
+                        ></span>
+                        <span className="capitalize">
+                          {changedEvent.tag.name || changedEvent.color}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </React.Fragment>
+              ) : (
+                <div className="grid p-fluid formgrid">
+                  <div className="col-12 field">
+                    <label
+                      htmlFor="calender"
+                      className="text-900 font-semibold"
+                    >
+                      Select Calender
+                    </label>
+                    <Dropdown
+                      inputId="calender"
+                      value={selectedCalendar.find((calendar) => calendar.calenderId)}
+                      options={selectedCalendar}
+                      onChange={(e) => console.log('Selected Calendar:', e.value)}
+                      optionLabel="calenderName"
+                      placeholder="Select One"
+                    />
+                  </div>
+                  <div className="col-12 md:col-6 field">
+                    <label htmlFor="title" className="text-900 font-semibold">
+                      Title
+                    </label>
+                    <span className="p-input-icon-left">
+                      <i className="pi pi-pencil"></i>
+                      <InputText
+                        id="title"
+                        value={changedEvent.title}
+                        onChange={(e) =>
+                          setChangedEvent((prevState) => ({
+                            ...prevState,
+                            title: e.target.value,
+                          }))
+                        }
+                        type="text"
+                        placeholder="Title"
+                      />
+                    </span>
+                  </div>
+                  <div className="col-12 md:col-6 field">
+                    <label
+                      htmlFor="location"
+                      className="text-900 font-semibold"
+                    >
+                      Location
+                    </label>
+                    <span className="p-input-icon-left">
+                      <i className="pi pi-map-marker"></i>
+                      <InputText
+                        id="location"
+                        value={changedEvent.location}
+                        onChange={(e) =>
+                          setChangedEvent((prevState) => ({
+                            ...prevState,
+                            location: e.target.value,
+                          }))
+                        }
+                        type="text"
+                        placeholder="Location"
+                      />
+                    </span>
+                  </div>
+                  <div className="col-12 field">
+                    <label
+                      htmlFor="description"
+                      className="text-900 font-semibold"
+                    >
+                      Event Description
+                    </label>
+                    <InputTextarea
+                      id="description"
+                      type="text"
+                      rows={5}
+                      value={changedEvent.description}
+                      onChange={(e) =>
+                        setChangedEvent((prevState) => ({
+                          ...prevState,
+                          description: e.target.value,
+                        }))
+                      }
+                      style={{ resize: "none" }}
+                    ></InputTextarea>
+                  </div>
+
+                  <div className="col-12 md:col-6 field">
+                    <label htmlFor="start" className="text-900 font-semibold">
+                      Start Date
+                    </label>
+                    <PRCalendar
+                      id="start"
+                      maxDate={changedEvent.end}
+                      value={changedEvent.start}
+                      onChange={(e) =>
+                        setChangedEvent((prevState) => ({
+                          ...prevState,
+                          start: e.value,
+                        }))
+                      }
+                      showTime
+                      required
+                    />
+                  </div>
+                  <div className="col-12 md:col-6 field">
+                    <label htmlFor="end" className="text-900 font-semibold">
+                      End Date
+                    </label>
+                    <PRCalendar
+                      id="end"
+                      minDate={changedEvent.start}
+                      value={changedEvent.end}
+                      onChange={(e) =>
+                        setChangedEvent((prevState) => ({
+                          ...prevState,
+                          end: e.value,
+                        }))
+                      }
+                      showTime
+                      required
+                    />
+                  </div>
+                  <div className="col-12 field">
+                    <label htmlFor="repeat" className="text-900 font-semibold">
+                      Repeat
+                    </label>
+                    <Dropdown
+                      inputId="repeat"
+                      value={
+                        changedEvent.occurrence
+                          ? changedEvent.occurrence.name
+                          : ""
+                      }
+                      options={occurrences}
+                      onChange={(e) =>
+                        setChangedEvent((prevState) => ({
+                          ...prevState,
+                          occurrence: {
+                            ...prevState.occurrence,
+                            name: e.value,
+                          },
+                        }))
+                      }
+                      optionLabel="name"
+                      placeholder="Select One"
+                      className="capitalize"
+                    />
+                  </div>
+                  <div className="col-12 field">
+                    <label
+                      htmlFor="company-color"
+                      className="text-900 font-semibold"
+                    >
+                      Color
+                    </label>
+                    <Dropdown
+                      inputId="company-color"
+                      value={changedEvent.tag}
+                      options={tags}
+                      onChange={(e) =>
+                        setChangedEvent((prevState) => ({
+                          ...prevState,
+                          tag: e.value,
+                        }))
+                      }
+                      optionLabel="name"
+                      placeholder="Select One"
+                      valueTemplate={selectedItemTemplate}
+                      itemTemplate={itemOptionTemplate}
+                    />
+                  </div>
+                </div>
+              )}
+            </>
+          </Dialog>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default CalendarDemo;
