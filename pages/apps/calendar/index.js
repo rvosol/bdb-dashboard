@@ -15,16 +15,20 @@ import { EventService } from "../../../demo/service/EventService";
 import axiosInstance from "../../../utils/axiosInstance";
 import moment from "moment";
 import { Toast } from "primereact/toast";
+import { sendStatusCode } from "next/dist/server/api-utils";
 
 const CalendarDemo = () => {
   const toast = useRef(null);
   const [events, setEvents] = useState(null);
   const [tags, setTags] = useState([]);
+  const [repeats, setRepeats] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
   const [view, setView] = useState("");
   const [changedEvent, setChangedEvent] = useState({
-    calenderId: "",
-    calenderName: "",
+    calData: {
+      calenderId: "",
+      calenderName: "",
+    },
     title: "",
     start: null,
     end: null,
@@ -33,11 +37,8 @@ const CalendarDemo = () => {
     borderColor: "",
     textColor: "",
     description: "",
-    occurrence: { name: "" },
-    tag: {
-      name: "",
-      color: "",
-    },
+    occurrence: "",
+    color:""
   });
 
   const onEventClick = (e) => {
@@ -72,6 +73,7 @@ const CalendarDemo = () => {
     { color: "#3f51b5", name: "Blueberry" },
   ];
 
+  const [calenderIds, setCalenderId] = useState([]);
   const [selectedCalendar, setSelectedCalendar] = useState([]);
 
   const fetchCalendarData = async () => {
@@ -82,6 +84,8 @@ const CalendarDemo = () => {
             calenderName : res.title,
         }));
         setSelectedCalendar(calendarData);
+        const _calenderId = calendarData.map((c) => ({ calenderId: c.calenderId, calenderName: c.calenderName, }));
+        setCalenderId(_calenderId);
     } catch (error) {
         console.error('Error fetching calendar data:', error);
     }
@@ -101,6 +105,10 @@ console.log("tt",setSelectedCalendar);
           description: event.description,
           occurrence: event.occurrence,
           color: event.color,
+          calData:{
+            calenderId: event?.calendar?._id,
+            calenderName: event?.calendar?.title
+          }
         }));
 
         setEvents(resData);
@@ -121,22 +129,23 @@ console.log("tt",setSelectedCalendar);
 
       const eventData = {
         id: changedEvent.id,
-        calendar: changedEvent.calenderId,
+        calendar: changedEvent.calData.calenderId,
         title: changedEvent.title,
         startAt: changedEvent.start.toISOString(),
         endAt: changedEvent.end.toISOString(),
         location: changedEvent.location,
         description: changedEvent.description,
-        color: changedEvent.tag.color,
-        occurrence: changedEvent.occurrence.name,
+        color: changedEvent.color,
+        occurrence: changedEvent.occurrence,
       };
-  console.log(eventData);
+  
       if (changedEvent.id) {
         const response = await axiosInstance.patch(`/admin/events`, eventData);
   
         if (response.data && response.data.status === "success") {
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Event updated', life: 3000 });
             fetchData();
+            setShowDialog(false);
         } else {
             console.error('Failed to update event');
         }
@@ -146,6 +155,7 @@ console.log("tt",setSelectedCalendar);
         if (response.data && response.data.status === "success") {
             toast.current.show({ severity: 'success', summary: 'Successful', detail: 'Event Created', life: 3000 });
             fetchData();
+            setShowDialog(false);
         } else {
             console.error('Failed to create event');
         }
@@ -153,7 +163,6 @@ console.log("tt",setSelectedCalendar);
     } catch (error) {
         toast.current.show({ severity: 'error', summary: 'Error', detail: error?.response?.data?.message || 'An error occurred while saving the event', life: 3000 });
     }
-    setShowDialog(false);
   };
 
   const handleDelete = async () => {
@@ -173,8 +182,12 @@ console.log("tt",setSelectedCalendar);
   useEffect(() => {
     fetchData();
     fetchCalendarData();
+
+    console.log("colors",colors)
     const _tags = colors.map((c) => ({ name: c.name, color: c.color }));
     setTags(_tags);
+    const _repeats = occurrences.map((c) => ({ name: c.name }));
+    setRepeats(_repeats);
   }, []);
 
   const validate = () => {
@@ -191,15 +204,17 @@ console.log("tt",setSelectedCalendar);
     setShowDialog(true);
     setChangedEvent({
       ...e,
+      calData: {
+        calenderId: "",
+        calenderName: "",
+      },
       title: "",
       location: "",
       borderColor: "",
       textColor: "",
       description: "",
-      tag: {
-        name: "",
-        color: "",
-      },
+      occurrence: "",
+      color:""
     });
   };
 
@@ -209,11 +224,11 @@ console.log("tt",setSelectedCalendar);
         <div
           className="flex-shrink-0 w-1rem h-1rem mr-2 border-circle"
           style={{
-            backgroundColor: changedEvent.tag.color || changedEvent.color,
+            backgroundColor:  changedEvent.color,
           }}
         ></div>
         <div className="capitalize">
-          {changedEvent.tag.name || changedEvent.color}
+           {colors.find(ss=>{ return ss.color==changedEvent.color})?.name}
         </div>
       </div>
     );
@@ -272,7 +287,6 @@ console.log("tt",setSelectedCalendar);
         ) : null}
     </>
   );
-
   return (
     <div className="grid">
       <div className="col-12">
@@ -282,7 +296,7 @@ console.log("tt",setSelectedCalendar);
             events={events}
             eventClick={onEventClick}
             select={onDateSelect}
-            initialDate="2023-11-01"
+            initialDate={moment( ).startOf("month").format("YYYY-MM-DD")}
             initialView="dayGridMonth"
             height={720}
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -327,14 +341,14 @@ console.log("tt",setSelectedCalendar);
                       <div className="text-900 font-semibold mb-2">Start</div>
                       <p className="flex align-items-center m-0">
                         <i className="pi pi-fw pi-clock text-700 mr-2"></i>
-                        <span>{changedEvent.start.toISOString()}</span>
+                        <span>{moment(changedEvent.start).format("YYYY-MM-DD hh:mm A")}</span>
                       </p>
                     </div>
                     <div className="col-6">
                       <div className="text-900 font-semibold mb-2">End</div>
                       <p className="flex align-items-center m-0">
                         <i className="pi pi-fw pi-clock text-700 mr-2"></i>
-                        <span>{changedEvent.end.toISOString()}</span>
+                        <span> {moment(changedEvent.end).format("YYYY-MM-DD hh:mm A")}</span>
                       </p>
                     </div>
                     <div className="col-12">
@@ -362,12 +376,11 @@ console.log("tt",setSelectedCalendar);
                         <span
                           className="inline-flex flex-shrink-0 w-1rem h-1rem mr-2 border-circle"
                           style={{
-                            backgroundColor:
-                              changedEvent.tag.color || changedEvent.color,
+                            backgroundColor: changedEvent.color,
                           }}
                         ></span>
                         <span className="capitalize">
-                          {changedEvent.tag.name || changedEvent.color}
+                          { changedEvent.color}
                         </span>
                       </p>
                     </div>
@@ -383,12 +396,23 @@ console.log("tt",setSelectedCalendar);
                       Select Calender
                     </label>
                     <Dropdown
-                      inputId="calender"
-                      value={selectedCalendar.find((calendar) => calendar.calenderId)}
-                      options={selectedCalendar}
-                      onChange={(e) => console.log('Selected Calendar:', e.value)}
+                      inputId="repeat"
+                      value={changedEvent.calData?.calenderId}
+                      options={calenderIds}
+                      onChange={(e) => {
+                        setChangedEvent((prevState) => ({
+                          ...prevState,
+                          calData:{
+                            calenderId:e.target.value
+                          },
+                        }));
+                        console.log("calendar Id", e.target.value);
+                      }}
+                      
                       optionLabel="calenderName"
+                      optionValue="calenderId"
                       placeholder="Select One"
+                      className="capitalize"
                     />
                   </div>
                   <div className="col-12 md:col-6 field">
@@ -498,22 +522,16 @@ console.log("tt",setSelectedCalendar);
                     </label>
                     <Dropdown
                       inputId="repeat"
-                      value={
-                        changedEvent.occurrence
-                          ? changedEvent.occurrence.name
-                          : ""
-                      }
-                      options={occurrences}
+                      value={changedEvent.occurrence}
+                      options={repeats}
                       onChange={(e) =>
                         setChangedEvent((prevState) => ({
                           ...prevState,
-                          occurrence: {
-                            ...prevState.occurrence,
-                            name: e.value,
-                          },
+                          occurrence: e.target.value,
                         }))
                       }
                       optionLabel="name"
+                      optionValue="name"
                       placeholder="Select One"
                       className="capitalize"
                     />
@@ -527,15 +545,16 @@ console.log("tt",setSelectedCalendar);
                     </label>
                     <Dropdown
                       inputId="company-color"
-                      value={changedEvent.tag}
-                      options={tags}
+                      value={changedEvent.color}
+                      options={colors}
                       onChange={(e) =>
                         setChangedEvent((prevState) => ({
                           ...prevState,
-                          tag: e.value,
+                          color: e.value,
                         }))
                       }
                       optionLabel="name"
+                      optionValue="color"
                       placeholder="Select One"
                       valueTemplate={selectedItemTemplate}
                       itemTemplate={itemOptionTemplate}
