@@ -8,6 +8,7 @@ import { InputText } from 'primereact/inputtext';
 import { Menu } from 'primereact/menu';
 import { Avatar } from 'primereact/avatar';
 import { Column } from 'primereact/column';
+import { Tooltip } from 'primereact/tooltip';
 import { CalendarContext } from './context/calendarcontext';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import axiosInstance from '../../../../utils/axiosInstance';
@@ -21,6 +22,9 @@ function AppCalendarTable(props) {
     const [dialogVisible, setDialogVisible] = useState(false);
     const [deleteCalendarDialog, setDeleteCalendarDialog] = useState(false);
     const [calendarToDelete, setCalendarToDelete] = useState(null);
+
+    const [cloneCalendarDialog, setCloneCalendarDialog] = useState(false);
+    const [calendarToClone, setCalendarToClone] = useState(null);
 
     const confirmDeleteCalendar = (calendar) => {
         setCalendarToDelete(calendar);
@@ -166,19 +170,29 @@ function AppCalendarTable(props) {
         setDialogVisible(true);
     };
 
-    const actionHeaderTemplate = (
-        <div className="flex -ml-2">
-            <span className="p-input-icon-left">
-                <i className="pi pi-search"></i>
-                <InputText id="search" placeholder="Search Calendar" className="w-full sm:w-auto" value={searchQuery} onChange={(e) => {
+    const actionSearchTemplate = (
+        <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+            {/* <h5 className="m-0">Manage Calenders</h5> */}
+            <span className="block mt-2 md:mt-0 p-input-icon-left">
+                <i className="pi pi-search" />
+                <InputText id="search" type="search" value={searchQuery} onChange={(e) => {
                     console.log(e.target.value)
                     setSearchQuery(e.target.value)
-                }} />
+                }} placeholder="Search Calender..." />
             </span>
-            {/* <Button type="button" icon="pi pi-refresh" rounded text className="p-button-plain"></Button> */}
-            {/* <Button type="button" icon="pi pi-ellipsis-v" rounded text className="p-button-plain ml-3" onClick={(event) => menu.current?.toggle(event)}></Button>
-            <Menu ref={menu} popup model={menuItems}></Menu> */}
         </div>
+        // <div className="flex -ml-2">
+        //     <span className="p-input-icon-left">
+        //         <i className="pi pi-search"></i>
+        //         <InputText id="search" placeholder="Search Calendar" className="w-full sm:w-auto" value={searchQuery} onChange={(e) => {
+        //             console.log(e.target.value)
+        //             setSearchQuery(e.target.value)
+        //         }} />
+        //     </span>
+        //     {/* <Button type="button" icon="pi pi-refresh" rounded text className="p-button-plain"></Button> */}
+        //     {/* <Button type="button" icon="pi pi-ellipsis-v" rounded text className="p-button-plain ml-3" onClick={(event) => menu.current?.toggle(event)}></Button>
+        //     <Menu ref={menu} popup model={menuItems}></Menu> */}
+        // </div>
     );
 
     const actionsBodyTemplate = (mail) => {
@@ -269,16 +283,8 @@ function AppCalendarTable(props) {
         );
     };
     const deleteCalendar = async () => {
-        // Implement the deletion logic here
-        // For example, make an API call to delete the calendar entry
-        // ...
-
-        // After deletion, update the state and close the dialog
         setDeleteCalendarDialog(false);
         setCalendarToDelete(null);
-        // Optionally, refresh the calendar entries list
-        // ...
-
         try {
             await axiosInstance.delete(`/admin/calendar/${calendarToDelete._id}`)
             setDeleteCalendarDialog(false);
@@ -289,12 +295,44 @@ function AppCalendarTable(props) {
             toastRef.current.show({ severity: 'error', summary: 'error', detail: 'Failed', life: 3000 });
         }
     };
+
+    const cloneCalendar = async (calendar) => {
+       
+        
+        try {
+            await axiosInstance.patch(`/admin/calendar/importCalendar/${calendar._id}`)
+            toastRef.current.show({ severity: 'success', summary: 'Successful', detail: 'Calendar Cloned', life: 3000 });
+        } catch (err) {
+            toastRef.current.show({ severity: 'error', summary: 'error', detail: 'Failed', life: 3000 });
+        }
+    };
+
     const deleteCalendarDialogFooter = (
         <>
             <Button label="No" icon="pi pi-times" className="p-button-text" onClick={() => setDeleteCalendarDialog(false)} />
             <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={deleteCalendar} />
         </>
     );
+
+    const cloneCalendarDialogFooter = (
+        <>
+            <Button label="No" icon="pi pi-times" className="p-button-text" onClick={() => setCloneCalendarDialog(false)} />
+            <Button label="Yes" icon="pi pi-check" className="p-button-text" onClick={cloneCalendar} />
+        </>
+    );
+
+    
+
+    const actionBodyTemplate = (rowData) => {
+        return (
+            <>
+                <Button icon="pi pi-clone" tooltip="Clone" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 25 }} className="p-button-rounded p-button-secondary mr-2" onClick={()=> cloneCalendar(rowData)} />
+                <Button icon="pi pi-pencil" tooltip="Edit" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 25 }} className="p-button-rounded p-button-warning mr-2"  />
+                <Button icon="pi pi-trash" tooltip="Delete" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 25 }} className="p-button-rounded p-button-danger" onClick={()=> confirmDeleteCalendar(rowData)} />
+            </>
+        );
+    };
+
 
 
 
@@ -312,9 +350,9 @@ function AppCalendarTable(props) {
                 rows={pagination?.limit}
                 totalRecords={pagination?.totalDocs}
                 paginator
-                rowHover
-                onRowMouseEnter={onRowMouseEnter}
-                onRowMouseLeave={onRowMouseLeave}
+                // rowHover
+                // onRowMouseEnter={onRowMouseEnter}
+                // onRowMouseLeave={onRowMouseLeave}
                 rowsPerPageOptions={[10, 20, 30]}
                 selection={selectedEntries}
                 onSelectionChange={(e) => setSelectedEntries(e.value)}
@@ -327,11 +365,13 @@ function AppCalendarTable(props) {
                 }}
                 first={(pagination?.page - 1) * pagination?.limit}
                 loading={loading}
+                header={actionSearchTemplate}
             >
-                <Column header={actionHeaderTemplate} body={actionsBodyTemplate} style={{ width: '8rem' }}></Column>
+                {/* <Column header={actionHeaderTemplate} body={actionsBodyTemplate} style={{ width: '8rem' }}></Column> */}
                 <Column  field="title" header="Title" ></Column>
                 <Column field="description" header="Description" ></Column>
                 <Column header={'Created Date'} field="createdAt" body={dateBodyTemplate}></Column>
+                <Column header="Action" body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
             </DataTable>
             <Dialog
                 visible={deleteCalendarDialog}
@@ -344,6 +384,19 @@ function AppCalendarTable(props) {
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
                     {calendarToDelete && <span>Are you sure you want to delete <b>{calendarToDelete.title}</b>?</span>}
+                </div>
+            </Dialog>
+            <Dialog
+                visible={cloneCalendarDialog}
+                style={{ width: '450px' }}
+                header="Confirm"
+                modal
+                footer={cloneCalendarDialogFooter}
+                onHide={() => setCloneCalendarDialog(false)}
+            >
+                <div className="confirmation-content">
+                    <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+                    {calendarToClone && <span>Are you sure you want to delete <b>{calendarToClone.title}</b>?</span>}
                 </div>
             </Dialog>
         </React.Fragment>
