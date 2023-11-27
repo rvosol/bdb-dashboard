@@ -6,7 +6,6 @@ import AppCalendarLayout from '../../../../demo/components/apps/calendar/AppCale
 
 const CalendarInbox = () => {
     const { calendars, pagination, setPagination, setSort, setSearchQuery, loading } = useContext(CalendarContext);
-console.log(calendars, 'calendars');
 
     return (
             <React.Fragment>

@@ -6,13 +6,12 @@ import AppCalendarLayout from '../../../../demo/components/apps/calendar/AppCale
 
 const CalendarInbox = () => {
     const { calendars, pagination, setPagination, setSort, setSearchQuery, loading } = useContext(CalendarContext);
+    const publicCalendars = calendars.filter(calendar => calendar.privacy === 'public');
     
-    const privateCalendars = calendars.filter(calendar => calendar.privacy === 'private');
-
     return (
             <React.Fragment>
                 <AppCalendarTable
-                    calendars={privateCalendars}
+                    calendars={publicCalendars}
                     pagination={pagination}
                     setPagination={setPagination}
                     setSort={setSort}

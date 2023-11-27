@@ -35,8 +35,6 @@ function AppCalendarTable(props) {
     const dt = useRef(null);
     const router = useRouter();
 
-    console.log(pagination)
-
     const onGlobalFilterChange = (e) => {
         const value = e.target.value;
         let _filters = { ...filters };
@@ -176,7 +174,6 @@ function AppCalendarTable(props) {
             <span className="block mt-2 md:mt-0 p-input-icon-left">
                 <i className="pi pi-search" />
                 <InputText id="search" type="search" value={searchQuery} onChange={(e) => {
-                    console.log(e.target.value)
                     setSearchQuery(e.target.value)
                 }} placeholder="Search Calender..." />
             </span>
@@ -290,7 +287,7 @@ function AppCalendarTable(props) {
             setDeleteCalendarDialog(false);
             setCalendarToDelete(null);
             setSearchQuery(' ')
-            toastRef.current.show({ severity: 'success', summary: 'Successful', detail: 'Calendar Deleted', life: 3000 });
+            toastRef.current.show({ severity: 'success', summary: 'Successful', detail: `${calendarToDelete.title} Calendar Deleted`, life: 3000 });
         } catch (err) {
             toastRef.current.show({ severity: 'error', summary: 'error', detail: 'Failed', life: 3000 });
         }
@@ -301,10 +298,15 @@ function AppCalendarTable(props) {
         
         try {
             await axiosInstance.patch(`/admin/calendar/importCalendar/${calendar._id}`)
-            toastRef.current.show({ severity: 'success', summary: 'Successful', detail: 'Calendar Cloned', life: 3000 });
+            setSearchQuery(' ')
+            toastRef.current.show({ severity: 'success', summary: 'Successful', detail: `${calendar.title} Calendar Cloned`, life: 3000 });
         } catch (err) {
             toastRef.current.show({ severity: 'error', summary: 'error', detail: 'Failed', life: 3000 });
         }
+    };
+
+    const handleEditCalendar = (calendar) => {
+        router.push(`/apps/calendar/create/${calendar._id}`);
     };
 
     const deleteCalendarDialogFooter = (
@@ -327,7 +329,7 @@ function AppCalendarTable(props) {
         return (
             <>
                 <Button icon="pi pi-clone" tooltip="Clone" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 25 }} className="p-button-rounded p-button-secondary mr-2" onClick={()=> cloneCalendar(rowData)} />
-                <Button icon="pi pi-pencil" tooltip="Edit" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 25 }} className="p-button-rounded p-button-warning mr-2"  />
+                <Button icon="pi pi-pencil" tooltip="Edit" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 25 }} className="p-button-rounded p-button-warning mr-2" onClick={() => handleEditCalendar(rowData)}  />
                 <Button icon="pi pi-trash" tooltip="Delete" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 25 }} className="p-button-rounded p-button-danger" onClick={()=> confirmDeleteCalendar(rowData)} />
             </>
         );
@@ -396,7 +398,7 @@ function AppCalendarTable(props) {
             >
                 <div className="confirmation-content">
                     <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                    {calendarToClone && <span>Are you sure you want to delete <b>{calendarToClone.title}</b>?</span>}
+                    {calendarToClone && <span>Are you sure you want to clone <b>{calendarToClone.title}</b>?</span>}
                 </div>
             </Dialog>
         </React.Fragment>

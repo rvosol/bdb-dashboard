@@ -62,13 +62,13 @@ function AppCalendarSidebar() {
         };
 
         setItems([
-            { label: 'All', icon: 'pi pi-inbox', badge: badgeValues.inbox, to: '/apps/calendar/all' },
-            { label: 'Private', icon: 'pi pi-star', badge: badgeValues.starred, to: '/apps/calendar/private' },
-            { label: 'Shared', icon: 'pi pi-ban', badge: badgeValues.spam, to: '/apps/calendar/shared' },
+            { id: 'all', label: 'All', icon: 'pi pi-list', badge: badgeValues.inbox, to: '/apps/calendar/all' },
+            { id: 'public', label: 'Public', icon: 'pi pi-users', badge: badgeValues.spam, to: '/apps/calendar/public' },
+            { id: 'private', label: 'Private', icon: 'pi pi-lock', badge: badgeValues.starred, to: '/apps/calendar/private' },
             // { label: 'Important', icon: 'pi pi-bookmark', badge: badgeValues.important, to: '/apps/calendar/important' },
             // { label: 'Sent', icon: 'pi pi-send', badge: badgeValues.sent, to: '/apps/calendar/sent' },
-            { label: 'Archived', icon: 'pi pi-book', badge: badgeValues.archived, to: '/apps/calendar/archived' },
-            { label: 'Trash', icon: 'pi pi-trash', badge: badgeValues.trash, to: '/apps/calendar/trash' }
+            // { label: 'Archived', icon: 'pi pi-book', badge: badgeValues.archived, to: '/apps/calendar/archived' },
+            // { label: 'Trash', icon: 'pi pi-trash', badge: badgeValues.trash, to: '/apps/calendar/trash' }
         ]);
     };
 
@@ -85,7 +85,7 @@ function AppCalendarSidebar() {
                         {items.map((item, i) => {
                             return (
                                 <li
-                                    key={i}
+                                    key={item.id}
                                     className={classNames('p-ripple cursor-pointer select-none p-3 transition-duration-150 border-round flex align-items-center justify-content-center md:justify-content-start md:flex-1 flex-auto', {
                                         'bg-primary': router.pathname === item.to,
                                         'hover:surface-hover': router.pathname !== item.to

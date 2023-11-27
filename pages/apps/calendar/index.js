@@ -90,7 +90,7 @@ const CalendarDemo = () => {
         console.error('Error fetching calendar data:', error);
     }
   };
-console.log("tt",setSelectedCalendar);
+
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get("/admin/events");
@@ -182,8 +182,6 @@ console.log("tt",setSelectedCalendar);
   useEffect(() => {
     fetchData();
     fetchCalendarData();
-
-    console.log("colors",colors)
     const _tags = colors.map((c) => ({ name: c.name, color: c.color }));
     setTags(_tags);
     const _repeats = occurrences.map((c) => ({ name: c.name }));
@@ -372,7 +370,6 @@ console.log("tt",setSelectedCalendar);
                     <div className="col-12">
                       <div className="text-900 font-semibold mb-2">Color</div>
                       <p className="flex align-items-center m-0">
-                        <i className="pi pi-palette text-700 mr-2"></i>
                         <span
                           className="inline-flex flex-shrink-0 w-1rem h-1rem mr-2 border-circle"
                           style={{
@@ -380,7 +377,7 @@ console.log("tt",setSelectedCalendar);
                           }}
                         ></span>
                         <span className="capitalize">
-                          { changedEvent.color}
+                          {colors.find(ss=>{ return ss.color==changedEvent.color})?.name}
                         </span>
                       </p>
                     </div>
@@ -406,7 +403,6 @@ console.log("tt",setSelectedCalendar);
                             calenderId:e.target.value
                           },
                         }));
-                        console.log("calendar Id", e.target.value);
                       }}
                       
                       optionLabel="calenderName"
