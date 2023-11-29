@@ -19,7 +19,7 @@ import { sendStatusCode } from "next/dist/server/api-utils";
 import { CalendarContext } from "../../../demo/components/apps/calendar/context/calendarcontext";
 
 const CalendarEvents = () => {
-  const {selectedCalendars} = useContext(CalendarContext); 
+  const { selectedCalendars } = useContext(CalendarContext);
   const toast = useRef(null);
   const [events, setEvents] = useState(null);
   const [tags, setTags] = useState([]);
@@ -93,10 +93,10 @@ const CalendarEvents = () => {
     }
   };
 
-  const fetchData = async (selectedCalendars) => {
+  const fetchData = async (select_id) => {
     try {
       const response = await axiosInstance.get("/admin/events", {
-        params: { calendarIds: JSON.stringify(selectedCalendars) },
+        params: { calendar: "6566f6f0a71b388803252e42" },
       });
 
       if (response.data && response.data.status === "success") {

@@ -9,27 +9,32 @@ import '../styles/demo/Demos.scss';
 import { AuthProvider } from '../layout/context/AuthContext';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { CalendarProvider } from '../demo/components/apps/calendar/context/calendarcontext';
 
 export default function MyApp({ Component, pageProps }) {
     if (Component.getLayout) {
         return (
             <AuthProvider>
-                <LayoutProvider>{Component.getLayout(<Component {...pageProps} />)}</LayoutProvider>
-
-                <ToastContainer />
+                <CalendarProvider>
+                    <LayoutProvider>
+                        {Component.getLayout(<Component {...pageProps} />)}
+                    </LayoutProvider>
+                    <ToastContainer />
+                </CalendarProvider>
             </AuthProvider>
         )
     } else {
         return (
 
             <AuthProvider>
-
-                <LayoutProvider>
-                    <Layout>
-                        <Component {...pageProps} />
-                    </Layout>
-                </LayoutProvider>
- <ToastContainer />
+                <CalendarProvider>
+                    <LayoutProvider>
+                        <Layout>
+                            <Component {...pageProps} />
+                        </Layout>
+                    </LayoutProvider>
+                    <ToastContainer />
+                </CalendarProvider>
             </AuthProvider>
 
         );

@@ -56,12 +56,18 @@ const AppMenu = () => {
                     items: [
                         {
                             label: 'App',
-                            icon: 'pi pi-fw pi-inbox',
-                            to: '/apps/calendar'
+                            icon: 'pi pi-fw pi-calendar',
+                            to: '/apps/calendar',
+                        },
+                        {
+                            label: 'List',
+                            icon: 'pi pi-fw pi-calendar',
+                            to: '/apps/calendar',
+                            type:"calendar_filter",
                         },
                         {
                             label: 'Settings',
-                            icon: 'pi pi-fw pi-inbox',
+                            icon: 'pi pi-fw pi-cog',
                             to: '/apps/calendar/all' 
                         },
 

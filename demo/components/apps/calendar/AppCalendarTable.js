@@ -30,6 +30,10 @@ function AppCalendarTable(props) {
         setCalendarToDelete(calendar);
         setDeleteCalendarDialog(true);
     };
+    const confirmCloneCalendar = (calendar) => {
+        setCalendarToClone(calendar);
+        setCloneCalendarDialog(true);
+    };
     const { toastRef } = useContext(CalendarContext); // Update to use CalendarContext
     const menu = useRef(null);
     const dt = useRef(null);
@@ -293,15 +297,16 @@ function AppCalendarTable(props) {
         }
     };
 
-    const cloneCalendar = async (calendar) => {
-       
-        
-        try {
-            await axiosInstance.patch(`/admin/calendar/importCalendar/${calendar._id}`)
-            setSearchQuery(' ')
-            toastRef.current.show({ severity: 'success', summary: 'Successful', detail: `${calendar.title} Calendar Cloned`, life: 3000 });
-        } catch (err) {
-            toastRef.current.show({ severity: 'error', summary: 'error', detail: 'Failed', life: 3000 });
+    const cloneCalendar = async () => {
+        setCloneCalendarDialog(false);
+        if(calendarToClone){
+            try {
+                await axiosInstance.patch(`/admin/calendar/importCalendar/${calendarToClone._id}`)
+                setSearchQuery(' ')
+                toastRef.current.show({ severity: 'success', summary: 'Successful', detail: `${calendarToClone.title} Calendar Cloned`, life: 3000 });
+            } catch (err) {
+                toastRef.current.show({ severity: 'error', summary: 'error', detail: 'Failed', life: 3000 });
+            }
         }
     };
 
@@ -326,11 +331,20 @@ function AppCalendarTable(props) {
     
 
     const actionBodyTemplate = (rowData) => {
+        const isPublic = rowData.privacy && rowData.privacy.toLowerCase() === 'public';
+        const isPrivate = rowData.privacy && rowData.privacy.toLowerCase() === 'private' || rowData.user;
+        
         return (
             <>
-                <Button icon="pi pi-clone" tooltip="Clone" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 25 }} className="p-button-rounded p-button-secondary mr-2" onClick={()=> cloneCalendar(rowData)} />
-                <Button icon="pi pi-pencil" tooltip="Edit" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 25 }} className="p-button-rounded p-button-warning mr-2" onClick={() => handleEditCalendar(rowData)}  />
-                <Button icon="pi pi-trash" tooltip="Delete" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 25 }} className="p-button-rounded p-button-danger" onClick={()=> confirmDeleteCalendar(rowData)} />
+                {isPublic ? (
+                    <Button icon="pi pi-clone" tooltip="Clone" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 25 }} className="p-button-rounded p-button-secondary mr-2" onClick={()=> confirmCloneCalendar(rowData)} />
+                ) : null }
+                {isPrivate ? (
+                    <>
+                        <Button icon="pi pi-pencil" tooltip="Edit" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 25 }} className="p-button-rounded p-button-warning mr-2" onClick={() => handleEditCalendar(rowData)}  />
+                        <Button icon="pi pi-trash" tooltip="Delete" tooltipOptions={{ position: 'bottom', mouseTrack: true, mouseTrackTop: 25 }} className="p-button-rounded p-button-danger" onClick={()=> confirmDeleteCalendar(rowData)} />
+                    </>
+                ) : null}
             </>
         );
     };

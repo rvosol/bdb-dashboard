@@ -46,7 +46,7 @@ const AppSidebar = () => {
 
             <div className="layout-menu-container">
                 <MenuProvider>
-                    <AppMenu />
+                        <AppMenu />
                 </MenuProvider>
             </div>
         </>

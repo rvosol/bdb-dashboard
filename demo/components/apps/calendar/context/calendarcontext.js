@@ -11,6 +11,8 @@ export const CalendarProvider = ({ children }) => {
     const [pagination, setPagination] = useState({ page: 1, limit: 10, totalDocs: 0 });
     const [sort, setSort] = useState({ sortBy: 'createdAt', sortOrder: 1 });
     const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCalendars, setSelectedCalendars] = useState([]);
+    
     const toastRef = useRef(null);
 
     const fetchCalendars = async () => {
@@ -31,6 +33,13 @@ export const CalendarProvider = ({ children }) => {
         }
     };
 
+    const toggleCalendarSelection = (calendarId) => {
+        if (selectedCalendars.includes(calendarId)) {
+            setSelectedCalendars(selectedCalendars.filter(id => id !== calendarId));
+        } else {
+            setSelectedCalendars([...selectedCalendars, calendarId]);
+        }
+    };
     useEffect(() => {
         fetchCalendars();
     }, [pagination.page, pagination.limit, sort, searchQuery]);
@@ -46,10 +55,11 @@ export const CalendarProvider = ({ children }) => {
         toastRef,
         loading,
         setLoading,
-        searchQuery
-        // Include all methods relevant to calendars
+        searchQuery,
+        selectedCalendars, 
+        toggleCalendarSelection,
     };
-
+    
     return (
         <CalendarContext.Provider value={value}>
             <Toast ref={toastRef} />
