@@ -17,9 +17,10 @@ import moment from "moment";
 import { Toast } from "primereact/toast";
 import { sendStatusCode } from "next/dist/server/api-utils";
 import { CalendarContext } from "../../../demo/components/apps/calendar/context/calendarcontext";
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 const CalendarEvents = () => {
-  const {selectedCalendars} = useContext(CalendarContext); 
+  const {selectedCalendars, loading, setLoading } = useContext(CalendarContext); 
   const toast = useRef(null);
   const [events, setEvents] = useState(null);
   const [tags, setTags] = useState([]);
@@ -95,10 +96,11 @@ const CalendarEvents = () => {
 
   const fetchData = async (selectedCalendars) => {
     try {
+      setLoading(true);
       const response = await axiosInstance.get("/admin/events", {
         params: { calendarIds: JSON.stringify(selectedCalendars) },
       });
-
+      setLoading(false);
       if (response.data && response.data.status === "success") {
         let resData = response.data?.data?.docs?.map((event) => ({
           id: event._id,
@@ -116,10 +118,12 @@ const CalendarEvents = () => {
         }));
 
         setEvents(resData);
+        setLoading(false);
       } else {
         console.error("Error fetching events:", response.data.message);
       }
     } catch (error) {
+      setLoading(false);
       console.error("Error fetching events:", error);
     }
   };
@@ -294,24 +298,28 @@ const CalendarEvents = () => {
       <div className="col-12">
         <div className="card">
         <Toast ref={toast} />
-          <FullCalendar
-            events={events}
-            eventClick={onEventClick}
-            select={onDateSelect}
-            initialDate={moment( ).startOf("month").format("YYYY-MM-DD")}
-            initialView="dayGridMonth"
-            height={720}
-            plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            headerToolbar={{
-              left: "prev,next today",
-              center: "title",
-              right: "dayGridMonth,timeGridWeek,timeGridDay",
-            }}
-            editable
-            selectable
-            selectMirror
-            dayMaxEvents
-          />
+        {loading ? (
+          <ProgressSpinner aria-label="Loading" style={{ height: "720px", display: "flex" }} />
+        ) : (
+            <FullCalendar
+              events={events}
+              eventClick={onEventClick}
+              select={onDateSelect}
+              initialDate={moment( ).startOf("month").format("YYYY-MM-DD")}
+              initialView="dayGridMonth"
+              height={720}
+              plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+              headerToolbar={{
+                left: "prev,next today",
+                center: "title",
+                right: "dayGridMonth,timeGridWeek,timeGridDay",
+              }}
+              editable
+              selectable
+              selectMirror
+              dayMaxEvents
+            />
+          )}
 
           <Dialog
             visible={showDialog}
@@ -333,6 +341,10 @@ const CalendarEvents = () => {
             <>
               {view === "display" ? (
                 <React.Fragment>
+                  <span className="text-900 font-semibold block mb-2">
+                    Name of Calender
+                  </span>
+                  <span className="block mb-3">{changedEvent.calData?.calenderName}</span>
                   <span className="text-900 font-semibold block mb-2">
                     Description
                   </span>

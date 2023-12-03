@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, createContext } from 'react';
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Toast } from 'primereact/toast';
 import axiosInstance from '../../../../../utils/axiosInstance';
@@ -6,6 +7,7 @@ import axiosInstance from '../../../../../utils/axiosInstance';
 export const CalendarContext = createContext();
 
 export const CalendarProvider = ({ children }) => {
+    const router = useRouter();
     const [calendars, setCalendars] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pagination, setPagination] = useState({ page: 1, limit: 10, totalDocs: 0 });
@@ -39,6 +41,7 @@ export const CalendarProvider = ({ children }) => {
         } else {
             setSelectedCalendars([...selectedCalendars, calendarId]);
         }
+        router.push(`/apps/calendar`);
     };
     useEffect(() => {
         fetchCalendars();

@@ -117,7 +117,13 @@ const AppMenuitem = (props) => {
                <div className="text-900 font-medium text-xl mb-2" style={{ marginLeft: "32px" }}>
                  Private Calendars
                </div>
-               {calendars
+               {calendars.filter((calendar) => calendar?.privacy && calendar?.privacy.toLowerCase() === 'private').length === 0 ? (
+                 <div className="text-lg text-red-400" style={{ marginLeft: "35px" }}>
+                   Calendar not found.
+                 </div>
+               )
+                : (<>
+                {calendars
                  .filter((calendar) => calendar?.privacy && calendar?.privacy.toLowerCase() === 'private')
                  .map((calendar) => (
                    <div key={calendar._id} className="flex align-items-center mb-2" style={{ marginLeft: "32px" }}>
@@ -131,16 +137,21 @@ const AppMenuitem = (props) => {
                      </label>
                    </div>
                  ))}
-               {calendars.filter((calendar) => calendar?.privacy && calendar?.privacy.toLowerCase() === 'private').length === 0 && (
-                 <div className="text-lg text-red-400" style={{ marginLeft: "35px" }}>
-                   Calendar not found.
-                 </div>
-               )}
+                </>)
+            }
+               
+               
            
                <div className="text-900 font-medium text-xl mb-2" style={{ marginLeft: "32px" }}>
                  Public Calendars
                </div>
-               {calendars
+               {calendars.filter((calendar) => calendar?.privacy && calendar?.privacy.toLowerCase() === 'public').length === 0 ? (
+                 <div className="text-lg text-red-400" style={{ marginLeft: "35px" }}>
+                   Calendar not found.
+                 </div>
+               ) : (
+                <>
+                {calendars
                  .filter((calendar) => calendar?.privacy && calendar?.privacy.toLowerCase() === 'public')
                  .map((calendar) => (
                    <div key={calendar._id} className="flex align-items-center mb-2" style={{ marginLeft: "32px" }}>
@@ -154,11 +165,10 @@ const AppMenuitem = (props) => {
                      </label>
                    </div>
                  ))}
-               {calendars.filter((calendar) => calendar?.privacy && calendar?.privacy.toLowerCase() === 'public').length === 0 && (
-                 <div className="text-lg text-red-400" style={{ marginLeft: "35px" }}>
-                   Calendar not found.
-                 </div>
+                </>
                )}
+               
+               
              </> :
             <li ref={menuitemRef} className={classNames({ 'layout-root-menuitem': props.root, 'active-menuitem': active })}>
                 {props.root && item.visible !== false && <div className="layout-menuitem-root-text">{item.label}</div>}

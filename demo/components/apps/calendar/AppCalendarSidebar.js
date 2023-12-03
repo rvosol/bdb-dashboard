@@ -17,54 +17,14 @@ function AppCalendarSidebar() {
     };
 
     const getBadgeValues = (data) => {
-        let inbox = [],
-            starred = [],
-            spam = [],
-            important = [],
-            archived = [],
-            trash = [],
-            sent = [];
-
-        for (let i = 0; i < data.length; i++) {
-            let mail = data[i];
-
-            if (!mail.archived && !mail.trash && !mail.spam && !mail.hasOwnProperty('sent')) {
-                inbox.push(mail);
-            }
-            if (mail.starred) {
-                starred.push(mail);
-            }
-            if (mail.spam) {
-                spam.push(mail);
-            }
-            if (mail.important) {
-                important.push(mail);
-            }
-            if (mail.archived) {
-                archived.push(mail);
-            }
-            if (mail.trash) {
-                trash.push(mail);
-            }
-            if (mail.sent) {
-                sent.push(mail);
-            }
-        }
-
-        const badgeValues = {
-            inbox: inbox.length,
-            starred: starred.length,
-            spam: spam.length,
-            important: important.length,
-            archived: archived.length,
-            trash: trash.length,
-            sent: sent.length
-        };
-
+        const allCalendars = data.length;
+        const publicCalendars = data.filter((calendar) => calendar?.privacy === 'public').length;
+        const privateCalendars = data.filter((calendar) => calendar?.privacy === 'private').length;
+        
         setItems([
-            { id: 'all', label: 'All', icon: 'pi pi-list', badge: badgeValues.inbox, to: '/apps/calendar/all' },
-            { id: 'public', label: 'Public', icon: 'pi pi-users', badge: badgeValues.spam, to: '/apps/calendar/public' },
-            { id: 'private', label: 'Private', icon: 'pi pi-lock', badge: badgeValues.starred, to: '/apps/calendar/private' },
+            { id: 'all', label: 'All', icon: 'pi pi-list', badge: allCalendars, to: '/apps/calendar/all' },
+            { id: 'public', label: 'Public', icon: 'pi pi-users', badge: publicCalendars, to: '/apps/calendar/public' },
+            { id: 'private', label: 'Private', icon: 'pi pi-lock', badge: privateCalendars, to: '/apps/calendar/private' },
             // { label: 'Important', icon: 'pi pi-bookmark', badge: badgeValues.important, to: '/apps/calendar/important' },
             // { label: 'Sent', icon: 'pi pi-send', badge: badgeValues.sent, to: '/apps/calendar/sent' },
             // { label: 'Archived', icon: 'pi pi-book', badge: badgeValues.archived, to: '/apps/calendar/archived' },
